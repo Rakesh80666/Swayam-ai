@@ -8,7 +8,7 @@ dotenv.config();
 const app = express();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 app.use(express.json({ limit: '30kb' }));
-app.use(express.static(path.join(__dirname'public'))) ;
+app.use(express.static(path.join(__dirname. 'public'))) ;
 app.get('/api/health', (_req, res) => res.json({ ok: true, app: 'SWAYAM AI', aiConfigured: Boolean(process.env.GEMINI_API_KEY) }));
 app.post('/api/chat', async (req, res) => {
   try {
