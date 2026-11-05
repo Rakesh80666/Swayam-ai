@@ -34,6 +34,7 @@ const db = getFirestore(app);
 // Page elements
 const $ = (id) => document.getElementById(id);
 const status = $("status") ;
+if (status) {status.Content="Checking Firebase connection... ";}
 const email = $("email");
 const password = $("password");
 const loginBtn = $("loginBtn");
