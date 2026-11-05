@@ -30,7 +30,7 @@ import { firebaseConfig } from "./firebase-config.js";
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-if (status) {status.textcontent = "Firebase initialized Successfully.";}
+if (status) {status.textContent = "Firebase initialized Successfully.";}
 // Page elements
 const $ = (id) => document.getElementById(id);
 const status = $("status") ;
