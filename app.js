@@ -30,7 +30,7 @@ import { firebaseConfig } from "./firebase-config.js";
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-
+if (status) {status.content= 'Firebase initialized Successfully. ";}
 // Page elements
 const $ = (id) => document.getElementById(id);
 const status = $("status") ;
@@ -43,7 +43,7 @@ const googleBtn = $("googleBtn");
 const resetBtn = $("resetBtn");
 const authMsg = $("authMsg");
 
-const chatPanel = $("chatPanel");
+const chatPan{el = $("chatPanel");
 const logoutBtn = $("logoutBtn");
 const messages = $("messages");
 const messageInput = $("message");
