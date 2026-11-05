@@ -28,14 +28,14 @@ import { firebaseConfig } from "./firebase-config.js";
 
 // Firebase setup
 const app = initializeApp(firebaseConfig);
-if (status) {status.textContent = "Firebase appstarted.";}
+if (status) status.textContent = "Firebase appstarted.";
 const auth = getAuth(app);
 const db = getFirestore(app);
 if (status) {status.textContent = "Firebase initialized Successfully.";}
 // Page elements
 const $ = (id) => document.getElementById(id);
 const status = $("status") ;
-if (status) {status.textContent="Checking Firebase connection... ";}
+if (status) status.textContent="Checking Firebase connection... ";
 const email = $("email");
 const password = $("password");
 const loginBtn = $("loginBtn");
