@@ -33,7 +33,7 @@ const db = getFirestore(app);
 
 // Page elements
 const $ = (id) => document.getElementById(id);
-
+const status = $("status") ;
 const email = $("email");
 const password = $("password");
 const loginBtn = $("loginBtn");
