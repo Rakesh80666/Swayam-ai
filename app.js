@@ -28,6 +28,7 @@ import { firebaseConfig } from "./firebase-config.js";
 
 // Firebase setup
 const app = initializeApp(firebaseConfig);
+if (status) {status.textContent = "Firebase appstarted.";}
 const auth = getAuth(app);
 const db = getFirestore(app);
 if (status) {status.textContent = "Firebase initialized Successfully.";}
