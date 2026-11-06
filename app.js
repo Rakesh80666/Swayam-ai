@@ -1,5 +1,6 @@
 
 
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 
 import {
@@ -27,165 +28,84 @@ import {
 
 import { firebaseConfig } from "./firebase-config.js";
 
-// Page elements
-const $ = (id) => document.getElementById(id);
-const status = $("status");
+const $ = id => document.getElementById(id);
 
+const status = $("status");
 const email = $("email");
 const password = $("password");
-const loginBtn = $("loginBtn");
-const signupBtn = $("signupBtn");
-const googleBtn = $("googleBtn");
-const resetBtn = $("resetBtn");
 const authMsg = $("authMsg");
-
 const chatPanel = $("chatPanel");
-const logoutBtn = $("logoutBtn");
 const messages = $("messages");
 const messageInput = $("message");
 const sendBtn = $("sendBtn");
 const micBtn = $("micBtn");
-const speakToggle = $("speakToggle");
-const clearBtn = $("clearBtn");
-
 const avatar = $("avatar");
 const greeting = $("greeting");
 const moodLine = $("moodLine");
 const reaction = $("reaction");
 
-// Firebase setup
+const moods = {
+  happy: { emoji: "😊", text: "આજે તમારો ઉત્સાહ સરસ છે!" },
+  sad: { emoji: "🥺", text: "હું અહીં છું, તમારી વાત સાંભળું છું." },
+  angry: { emoji: "😌", text: "ચાલો, શાંતિથી વાત કરીએ." },
+  tired: { emoji: "😴", text: "થોડો આરામ પણ જરૂરી છે." },
+  excited: { emoji: "🤩", text: "વાહ! તમારો વિચાર આગળ વધારીએ." },
+  neutral: { emoji: "🙂", text: "હું તમારી સાથે છું." }
+};
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-if (status) status.textContent = "Firebase initialized successfully.";
-
-// App state
 let currentUser = null;
 let chatHistory = [];
 let busy = false;
 let persona = "female";
 let speakEnabled = true;
 
-// Mood settings
-const moods = {
-  happy: {
-    color: "#fff0c2",
-    emoji: "😊",
-    text: "આજે તમારો ઉત્સાહ સરસ છે!"
-  },
-  sad: {
-    color: "#dce8f7",
-    emoji: "🥺",
-    text: "હું અહીં છું, તમારી વાત સાંભળું છું."
-  },
-  angry: {
-    color: "#f7dada",
-    emoji: "😌",
-    text: "ચાલો, શાંતિથી વાત કરીએ."
-  },
-  tired: {
-    color: "#e7e1f4",
-    emoji: "😴",
-    text: "થોડો આરામ પણ જરૂરી છે."
-  },
-  excited: {
-    color: "#ffe2ca",
-    emoji: "🤩",
-    text: "વાહ! તમારો વિચાર આગળ વધારીએ."
-  },
-  neutral: {
-    color: "#e5edf0",
-    emoji: "🙂",
-    text: "હું તમારી સાથે છું."
-  }
-};
+if (status) status.textContent = "Firebase જોડાણ તૈયાર છે.";
 
-// Male / Female companion selection
-function addPersonaSelector() {
-  if ($("personaSelect")) return;
+try {
+  persona = localStorage.getItem("swayamPersona") || "female";
+} catch (error) {}
 
-  const selector = document.createElement("div");
-  selector.style.cssText =
-    "padding:10px;text-align:center;color:inherit;";
+const personaSelect = $("personaSelect");
 
-  selector.innerHTML = `
-    <label for="personaSelect">તમારી સાથી પસંદ કરો: </label>
-    <select id="personaSelect">
-      <option value="female">મહિલા મિત્ર</option>
-      <option value="male">પુરુષ મિત્ર</option>
-    </select>
-  `;
+if (personaSelect) {
+  personaSelect.value = persona;
 
-  const target = chatPanel || greeting?.parentElement;
+  personaSelect.addEventListener("change", () => {
+    persona = personaSelect.value;
 
-  if (target) target.prepend(selector);
-
-  const select = $("personaSelect");
-
-  if (select) {
     try {
-      persona = localStorage.getItem("swayamPersona") || "female";
-    } catch (error) {
-      persona = "female";
-    }
+      localStorage.setItem("swayamPersona", persona);
+    } catch (error) {}
 
-    select.value = persona;
-
-    select.addEventListener("change", () => {
-      persona = select.value;
-
-      try {
-        localStorage.setItem("swayamPersona", persona);
-      } catch (error) {
-        console.log("Preference could not be saved.");
-      }
-
-      updateAvatar("neutral");
-    });
-  }
+    if (avatar) avatar.dataset.persona = persona;
+  });
 }
 
-// Change appearance according to mood
 function updateAvatar(mood = "neutral") {
   const data = moods[mood] || moods.neutral;
 
   document.body.dataset.mood = mood;
 
-  document.documentElement.style.setProperty(
-    "--swayam-mood",
-    data.color
-  );
-
   if (avatar) {
-    if (persona === "male") {
-      const maleFaces = {
-        happy: "😄",
-        sad: "😔",
-        angry: "😌",
-        tired: "😴",
-        excited: "🤩",
-        neutral: "🙂"
-      };
-
-      avatar.textContent = maleFaces[mood] || "🙂";
-    } else {
-      avatar.textContent = data.emoji;
-    }
+    avatar.dataset.mood = mood;
+    avatar.dataset.persona = persona;
   }
 
   if (moodLine) moodLine.textContent = data.text;
   if (reaction) reaction.textContent = data.emoji;
 }
 
-// Show chat message
 function showMessage(text, who) {
   if (!messages) return;
 
   const bubble = document.createElement("div");
 
   bubble.className =
-    who === "user" ? "user-message" : "ai-message";
+    who === "user" ? "bubble user" : "bubble bot";
 
   bubble.textContent = text;
 
@@ -193,12 +113,10 @@ function showMessage(text, who) {
   messages.scrollTop = messages.scrollHeight;
 }
 
-// Firebase chat collection
 function chatCollection() {
   return collection(db, "users", currentUser.uid, "messages");
 }
 
-// Load old messages
 async function loadMessages() {
   if (!currentUser || !messages) return;
 
@@ -214,18 +132,18 @@ async function loadMessages() {
 
     const snapshot = await getDocs(q);
 
-    snapshot.forEach((doc) => {
-      const data = doc.data();
+    snapshot.forEach(doc => {
+      const item = doc.data();
 
-      if (data.role && data.text) {
+      if (item.role && item.text) {
         chatHistory.push({
-          role: data.role === "assistant" ? "model" : data.role,
-          text: data.text
+          role: item.role === "assistant" ? "model" : item.role,
+          text: item.text
         });
 
         showMessage(
-          data.text,
-          data.role === "user" ? "user" : "ai"
+          item.text,
+          item.role === "user" ? "user" : "ai"
         );
       }
     });
@@ -239,7 +157,6 @@ async function loadMessages() {
   }
 }
 
-// Save message
 async function saveMessage(role, text) {
   if (!currentUser) return;
 
@@ -254,10 +171,8 @@ async function saveMessage(role, text) {
   }
 }
 
-// Speak AI response
 function speak(text) {
-  if (!("speechSynthesis" in window)) return;
-  if (!speakEnabled) return;
+  if (!("speechSynthesis" in window) || !speakEnabled) return;
 
   speechSynthesis.cancel();
 
@@ -265,25 +180,27 @@ function speak(text) {
 
   utterance.lang = "gu-IN";
   utterance.rate = 0.9;
-  utterance.pitch = persona === "female" ? 1.1 : 0.9;
+  utterance.pitch = persona === "female" ? 1.08 : 0.92;
+
+  utterance.onstart = () => avatar?.classList.add("speaking");
+  utterance.onend = () => avatar?.classList.remove("speaking");
+  utterance.onerror = () => avatar?.classList.remove("speaking");
 
   speechSynthesis.speak(utterance);
 }
 
-// Voice on/off button
-speakToggle?.addEventListener("click", () => {
+$("speakToggle")?.addEventListener("click", () => {
   speakEnabled = !speakEnabled;
 
-  speakToggle.textContent = speakEnabled
-    ? "🔊 અવાજ ચાલુ"
-    : "🔇 અવાજ બંધ";
+  $("speakToggle").textContent =
+    speakEnabled ? "🔊 અવાજ ચાલુ" : "🔇 અવાજ બંધ";
 
   if (!speakEnabled && "speechSynthesis" in window) {
     speechSynthesis.cancel();
+    avatar?.classList.remove("speaking");
   }
 });
 
-// Send message to Gemini
 async function sendMessage() {
   if (busy || !currentUser) return;
 
@@ -299,10 +216,7 @@ async function sendMessage() {
 
   showMessage(text, "user");
 
-  chatHistory.push({
-    role: "user",
-    text
-  });
+  chatHistory.push({ role: "user", text });
 
   await saveMessage("user", text);
 
@@ -311,9 +225,7 @@ async function sendMessage() {
   try {
     const response = await fetch("/api/chat", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         message: text,
         history: chatHistory.slice(-8),
@@ -324,23 +236,15 @@ async function sendMessage() {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(
-        data.error || "AI જવાબ આપી શક્યું નથી."
-      );
+      throw new Error(data.error || "AI જવાબ આપી શક્યું નથી.");
     }
 
     const reply = data.reply || "હું સાંભળું છું.";
-
-    const mood = moods[data.mood]
-      ? data.mood
-      : "neutral";
+    const mood = moods[data.mood] ? data.mood : "neutral";
 
     showMessage(reply, "ai");
 
-    chatHistory.push({
-      role: "model",
-      text: reply
-    });
+    chatHistory.push({ role: "model", text: reply });
 
     await saveMessage("assistant", reply);
 
@@ -368,8 +272,7 @@ async function sendMessage() {
   }
 }
 
-// Login
-loginBtn?.addEventListener("click", async () => {
+$("loginBtn")?.addEventListener("click", async () => {
   try {
     await signInWithEmailAndPassword(
       auth,
@@ -387,8 +290,7 @@ loginBtn?.addEventListener("click", async () => {
   }
 });
 
-// Create new account
-signupBtn?.addEventListener("click", async () => {
+$("signupBtn")?.addEventListener("click", async () => {
   try {
     await createUserWithEmailAndPassword(
       auth,
@@ -406,13 +308,9 @@ signupBtn?.addEventListener("click", async () => {
   }
 });
 
-// Google login
-googleBtn?.addEventListener("click", async () => {
+$("googleBtn")?.addEventListener("click", async () => {
   try {
-    await signInWithPopup(
-      auth,
-      new GoogleAuthProvider()
-    );
+    await signInWithPopup(auth, new GoogleAuthProvider());
 
   } catch (error) {
     if (authMsg) {
@@ -422,8 +320,7 @@ googleBtn?.addEventListener("click", async () => {
   }
 });
 
-// Password reset
-resetBtn?.addEventListener("click", async () => {
+$("resetBtn")?.addEventListener("click", async () => {
   try {
     await sendPasswordResetEmail(
       auth,
@@ -431,8 +328,7 @@ resetBtn?.addEventListener("click", async () => {
     );
 
     if (authMsg) {
-      authMsg.textContent =
-        "પાસવર્ડ રીસેટ લિંક મોકલી છે.";
+      authMsg.textContent = "પાસવર્ડ રીસેટ લિંક મોકલી છે.";
     }
 
   } catch (error) {
@@ -443,8 +339,7 @@ resetBtn?.addEventListener("click", async () => {
   }
 });
 
-// Logout
-logoutBtn?.addEventListener("click", async () => {
+$("logoutBtn")?.addEventListener("click", async () => {
   try {
     await signOut(auth);
   } catch (error) {
@@ -452,33 +347,25 @@ logoutBtn?.addEventListener("click", async () => {
   }
 });
 
-// Send button
 sendBtn?.addEventListener("click", sendMessage);
 
-// Enter key
-messageInput?.addEventListener("keydown", (event) => {
+messageInput?.addEventListener("keydown", event => {
   if (event.key === "Enter" && !event.shiftKey) {
     event.preventDefault();
     sendMessage();
   }
 });
 
-// Clear chat history
-clearBtn?.addEventListener("click", async () => {
+$("clearBtn")?.addEventListener("click", async () => {
   if (!currentUser) return;
 
-  if (!confirm("તમારી જૂની વાતચીત કાઢી નાખવી છે?")) {
-    return;
-  }
+  if (!confirm("તમારી જૂની વાતચીત કાઢી નાખવી છે?")) return;
 
   try {
     const snapshot = await getDocs(chatCollection());
-
     const batch = writeBatch(db);
 
-    snapshot.forEach((doc) => {
-      batch.delete(doc.ref);
-    });
+    snapshot.forEach(doc => batch.delete(doc.ref));
 
     await batch.commit();
 
@@ -489,15 +376,11 @@ clearBtn?.addEventListener("click", async () => {
     updateAvatar("neutral");
 
   } catch (error) {
-    alert(
-      "Chat History કાઢી શકાઈ નથી. Firebase Rules તપાસો."
-    );
-
+    alert("Chat History કાઢી શકાઈ નથી. Firebase Rules તપાસો.");
     console.error(error);
   }
 });
 
-// Voice input
 const SpeechRecognition =
   window.SpeechRecognition ||
   window.webkitSpeechRecognition;
@@ -517,9 +400,8 @@ if (micBtn && SpeechRecognition) {
     }
   });
 
-  recognition.onresult = (event) => {
-    const spokenText =
-      event.results[0][0].transcript;
+  recognition.onresult = event => {
+    const spokenText = event.results[0][0].transcript;
 
     if (messageInput) {
       messageInput.value = spokenText;
@@ -539,8 +421,7 @@ if (micBtn && SpeechRecognition) {
   });
 }
 
-// Authentication state
-onAuthStateChanged(auth, async (user) => {
+onAuthStateChanged(auth, async user => {
   currentUser = user;
 
   const authPanel = $("authPanel");
@@ -548,10 +429,7 @@ onAuthStateChanged(auth, async (user) => {
   if (user) {
     if (authPanel) authPanel.style.display = "none";
 
-    if (chatPanel) {
-      chatPanel.classList.remove("hidden");
-      chatPanel.style.display = "block";
-    }
+    chatPanel?.classList.remove("hidden");
 
     if (greeting) {
       greeting.textContent =
@@ -564,13 +442,11 @@ onAuthStateChanged(auth, async (user) => {
   } else {
     if (authPanel) authPanel.style.display = "";
 
-    if (chatPanel) {
-      chatPanel.classList.add("hidden");
-      chatPanel.style.display = "";
-    }
+    chatPanel?.classList.add("hidden");
 
     chatHistory = [];
 
     if (messages) messages.innerHTML = "";
   }
 });
+
