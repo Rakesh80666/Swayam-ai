@@ -539,7 +539,7 @@ if (micBtn && SpeechRecognition) {
   });
 }
 
- Authentication state
+// Authentication state
 onAuthStateChanged(auth, async (user) => {
   currentUser = user;
 
