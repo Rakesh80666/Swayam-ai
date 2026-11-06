@@ -1,7 +1,8 @@
 
+
 :root {
   --bg: #eef2f8;
-  --panel: #fff;
+  --panel: #ffffff;
   --ink: #17233f;
   --muted: #66738c;
   --accent: #6878d8;
@@ -52,7 +53,9 @@ h1 {
   margin: 0;
 }
 
-header p, .hint, footer {
+header p,
+.hint,
+footer {
   color: var(--muted);
   font-size: 12px;
   margin: 3px 0;
@@ -81,7 +84,8 @@ p {
   line-height: 1.5;
 }
 
-.auth input, .composer input {
+.auth input,
+.composer input {
   width: 100%;
   padding: 14px;
   border: 1px solid #dce2ed;
@@ -159,209 +163,79 @@ button:disabled {
   padding: 6px;
 }
 
-.persona-row {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  margin-top: 14px;
-  font-size: 13px;
-}
-
-.persona-row select {
-  border: 1px solid #dce2ed;
-  border-radius: 10px;
-  padding: 7px;
-  background: var(--panel);
-  color: var(--ink);
-  font: inherit;
-}
+/* Avatar stage */
 
 .avatarwrap {
   position: relative;
-  width: 164px;
-  height: 176px;
-  margin: 16px auto 12px;
+  width: 160px;
+  height: 160px;
+  margin: 22px auto 12px;
+  display: grid;
+  place-items: center;
 }
 
 .avatar {
-  position: relative;
-  width: 154px;
-  height: 166px;
+  width: 138px;
+  height: 138px;
+  border-radius: 50%;
   margin: auto;
+  background: linear-gradient(145deg, #9caefb, #f1b8c8);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 12px 35px #6878d855;
+  position: relative;
   z-index: 1;
+  transition: background .8s, transform .4s;
 }
 
-.face {
-  position: absolute;
-  top: 18px;
-  left: 32px;
-  width: 90px;
-  height: 104px;
-  border-radius: 46% 46% 48% 48%;
-  background: linear-gradient(145deg, #f8d3b7, #eab99a);
-  z-index: 3;
-  box-shadow: inset -5px -4px 8px #9c5d4520;
+.avatar span {
+  font-size: 76px;
+  color: #fff;
+  text-shadow: 0 3px 10px #35406a55;
+  display: inline-block;
+  animation: faceFloat 4s ease-in-out infinite;
 }
 
-.hair {
-  position: absolute;
-  top: 8px;
-  left: 27px;
-  width: 100px;
-  height: 64px;
-  border-radius: 52% 52% 22% 22%;
-  background: #382a2b;
-  z-index: 4;
+.avatar.speaking span {
+  animation: faceTalk .28s ease-in-out infinite alternate;
 }
 
-.avatar[data-persona="male"] .hair {
-  height: 42px;
-  top: 8px;
-  border-radius: 48% 48% 18% 18%;
-  background: #292a30;
+@keyframes faceFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
 }
 
-.avatar[data-persona="male"] .face {
-  top: 20px;
-  border-radius: 43% 43% 48% 48%;
+@keyframes faceTalk {
+  from { transform: scale(1); }
+  to { transform: scale(1.09); }
 }
 
-.eye {
-  position: absolute;
-  top: 43px;
-  width: 8px;
-  height: 11px;
-  border-radius: 50%;
-  background: #33272a;
-  z-index: 5;
-  animation: blink 5s infinite;
+/* Blinking effect */
+
+.avatar:not(.speaking) span {
+  animation:
+    faceFloat 4s ease-in-out infinite,
+    blink 5s infinite;
 }
 
-.eye.left {
-  left: 24px;
-}
-
-.eye.right {
-  right: 24px;
-}
-
-.cheek {
-  position: absolute;
-  top: 61px;
-  width: 15px;
-  height: 8px;
-  border-radius: 50%;
-  background: #e58f8b55;
-}
-
-.cheek.left {
-  left: 10px;
-}
-
-.cheek.right {
-  right: 10px;
-}
-
-.mouth {
-  position: absolute;
-  left: 37px;
-  top: 76px;
-  width: 17px;
-  height: 7px;
-  border-bottom: 2px solid #9c4d51;
-  border-radius: 0 0 50% 50%;
-  z-index: 5;
-  transition: all .2s;
-}
-
-.neck {
-  position: absolute;
-  top: 111px;
-  left: 67px;
-  width: 30px;
-  height: 28px;
-  background: #e9b795;
-  z-index: 1;
-}
-
-.shoulders {
-  position: absolute;
-  bottom: 0;
-  left: 16px;
-  width: 122px;
-  height: 42px;
-  border-radius: 60px 60px 15px 15px;
-  background: linear-gradient(120deg, #8294d6, #b9a3d8);
-  z-index: 2;
-}
-
-.avatar[data-persona="male"] .shoulders {
-  background: linear-gradient(120deg, #557c9c, #7c91b1);
-}
-
-.avatar[data-mood="happy"] .mouth,
-.avatar[data-mood="excited"] .mouth {
-  height: 14px;
-  width: 25px;
-  left: 33px;
-  border: 0;
-  background: #a94f58;
-  border-radius: 0 0 50% 50%;
-}
-
-.avatar[data-mood="sad"] .mouth {
-  top: 82px;
-  border-bottom: 0;
-  border-top: 2px solid #9c4d51;
-  border-radius: 50% 50% 0 0;
-}
-
-.avatar[data-mood="angry"] .eye {
-  height: 7px;
-  transform: rotate(-12deg);
-}
-
-.avatar.speaking .mouth {
-  height: 13px;
-  width: 13px;
-  left: 39px;
-  top: 74px;
-  border: 2px solid #9c4d51;
-  border-radius: 50%;
-  background: #a94f58;
-  animation: talk .22s infinite alternate;
+@keyframes blink {
+  0%, 44%, 48%, 100% { filter: brightness(1); }
+  46% { filter: brightness(.75); }
 }
 
 .pulse {
   position: absolute;
-  inset: 12px;
+  inset: 0;
   border: 2px solid var(--accent);
   border-radius: 50%;
   animation: pulse 2.5s infinite;
   opacity: .5;
-  z-index: 0;
 }
 
 @keyframes pulse {
   to {
-    transform: scale(1.18);
+    transform: scale(1.22);
     opacity: 0;
-  }
-}
-
-@keyframes blink {
-  0%, 46%, 50%, 100% {
-    transform: scaleY(1);
-  }
-  48% {
-    transform: scaleY(.08);
-  }
-}
-
-@keyframes talk {
-  to {
-    transform: scaleY(.55);
   }
 }
 
@@ -463,15 +337,7 @@ footer {
   padding: 10px 8px;
 }
 
-@media (min-width: 600px) {
-  .shell {
-    padding-top: 30px;
-  }
-
-  .messages {
-    height: 340px;
-  }
-}
+/* Mood-based themes */
 
 body[data-mood="happy"],
 body[data-mood="excited"] {
@@ -496,4 +362,24 @@ body[data-mood="tired"] {
   --bg: #f0eff7;
   --accent: #8179aa;
   --soft: #ebe9f5;
+}
+
+@media (min-width: 600px) {
+  .shell {
+    padding-top: 30px;
+  }
+
+  .messages {
+    height: 340px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
 }
