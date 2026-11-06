@@ -95,6 +95,103 @@ const moods = {
   }
 };
 
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+  sendPasswordResetEmail,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  orderBy,
+  limit,
+  serverTimestamp,
+  writeBatch
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+import { firebaseConfig } from "./firebase-config.js";
+
+const $ = (id) => document.getElementById(id);
+
+const status = $("status");
+const email = $("email");
+const password = $("password");
+const loginBtn = $("loginBtn");
+const signupBtn = $("signupBtn");
+const googleBtn = $("googleBtn");
+const resetBtn = $("resetBtn");
+const authMsg = $("authMsg");
+
+const chatPanel = $("chatPanel");
+const logoutBtn = $("logoutBtn");
+const messages = $("messages");
+const messageInput = $("message");
+const sendBtn = $("sendBtn");
+const micBtn = $("micBtn");
+const speakToggle = $("speakToggle");
+const clearBtn = $("clearBtn");
+
+const avatar = $("avatar");
+const greeting = $("greeting");
+const moodLine = $("moodLine");
+const reaction = $("reaction");
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+if (status) status.textContent = "SWAYAM AI તૈયાર છે.";
+
+let currentUser = null;
+let chatHistory = [];
+let busy = false;
+let persona = "female";
+let speakEnabled = true;
+
+const moods = {
+  happy: {
+    color: "#fff0c2",
+    emoji: "😊",
+    text: "આજે તમારો ઉત્સાહ સરસ છે!"
+  },
+  sad: {
+    color: "#dce8f7",
+    emoji: "🥺",
+    text: "હું અહીં છું, તમારી વાત સાંભળું છું."
+  },
+  angry: {
+    color: "#f7dada",
+    emoji: "😌",
+    text: "ચાલો, શાંતિથી વાત કરીએ."
+  },
+  tired: {
+    color: "#e7e1f4",
+    emoji: "😴",
+    text: "થોડો આરામ પણ જરૂરી છે."
+  },
+  excited: {
+    color: "#ffe2ca",
+    emoji: "🤩",
+    text: "વાહ! તમારો વિચાર આગળ વધારીએ."
+  },
+  neutral: {
+    color: "#e5edf0",
+    emoji: "🙂",
+    text: "હું તમારી સાથે છું."
+  }
+};
+
 function addPersonaSelector() {
   if ($("personaSelect")) return;
 
