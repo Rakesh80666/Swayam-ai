@@ -11,8 +11,9 @@
 <link rel="stylesheet" href="/style.css">
 <title>SWAYAM AI</title>
 </head>
-<body data-mood="neutral">
+<body>
 <main class="shell">
+
 <header>
   <div class="brandmark">S</div>
   <div>
@@ -25,54 +26,45 @@
 <section class="auth card" id="authPanel">
   <h2>તમારું સ્વાગત છે</h2>
   <p>તમારા ઈમેલથી પ્રવેશ કરો અથવા નવું એકાઉન્ટ બનાવો.</p>
+
   <input id="email" type="email" autocomplete="email" placeholder="ઈમેલ સરનામું">
   <input id="password" type="password" autocomplete="current-password" placeholder="પાસવર્ડ (ઓછામાં ઓછા 6 અક્ષર)">
+
   <div class="actions">
     <button id="loginBtn">લૉગ ઇન</button>
     <button id="signupBtn" class="secondary">નવું એકાઉન્ટ</button>
   </div>
+
   <button id="googleBtn" class="google secondary">Google થી પ્રવેશ</button>
-  <button id="resetBtn" class="secondary">પાસવર્ડ ભૂલી ગયા?</button>
+  <button id="resetBtn" class="secondary">Forgot Password?</button>
+
   <p id="authMsg" class="hint">Login or create your account.</p>
 </section>
 
 <section id="chatPanel" class="hidden">
+
   <div class="call card">
+
     <div class="calltop">
       <span class="live"><i></i> SWAYAM સાથે વાતચીત</span>
       <button id="logoutBtn" class="textbtn">બહાર નીકળો</button>
     </div>
 
-    <div class="persona-row">
-      <label for="personaSelect">તમારી સાથી પસંદ કરો:</label>
-      <select id="personaSelect">
-        <option value="female">મહિલા મિત્ર</option>
-        <option value="male">પુરુષ મિત્ર</option>
-      </select>
-    </div>
-
     <div class="avatarwrap">
-      <div class="avatar" id="avatar" data-persona="female" data-mood="neutral">
-        <div class="hair"></div>
-        <div class="face">
-          <span class="eye left"></span>
-          <span class="eye right"></span>
-          <span class="cheek left"></span>
-          <span class="cheek right"></span>
-          <span class="mouth"></span>
-        </div>
-        <div class="neck"></div>
-        <div class="shoulders"></div>
+      <div class="avatar" id="avatar">
+        <span>🙂</span>
       </div>
       <div class="pulse"></div>
     </div>
 
-    <h2 id="greeting">હું તમને સાંભળું છું...</h2>
+    <h2 id="greeting">હું અહીં છું 🙂</h2>
     <p id="moodLine">આજે તમે જે વાત કરવા માંગો તે કહો.</p>
     <div id="reaction" class="reaction">🌼</div>
+
   </div>
 
   <div class="card chatcard">
+
     <div id="messages" class="messages">
       <div class="bubble bot">નમસ્તે! આજે મનમાં શું ચાલી રહ્યું છે? હું સાંભળું છું. 🌼</div>
     </div>
@@ -87,12 +79,18 @@
       <button id="speakToggle" class="small secondary">🔊 અવાજ ચાલુ</button>
       <button id="clearBtn" class="small secondary">ચેટ સાફ કરો</button>
     </div>
+
   </div>
 </section>
 
-<footer>તમારી વાતચીત તમારા એકાઉન્ટ સાથે જોડાય છે. આ પ્રારંભિક વર્ઝન છે; સંવેદનશીલ માહિતી શેર ન કરો.</footer>
+<footer>
+  તમારી વાતચીત તમારા એકાઉન્ટ સાથે જોડાય છે. આ પ્રારંભિક વર્ઝન છે; સંવેદનશીલ માહિતી શેર ન કરો.
+</footer>
+
 </main>
-<script type="module" src="/app.js"></script>
+
+<script type="module" src="./app.js"></script>
+
 </body>
 </html>
 
