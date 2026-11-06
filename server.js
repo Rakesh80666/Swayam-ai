@@ -17,7 +17,7 @@ app.post('/api/chat', async (req, res) => {
     if (!message) return res.status(400).json({ error: 'તમારો સંદેશ લખો.' });
     if (!process.env.GEMINI_API_KEY) return res.status(503).json({ error: 'AI સર્વર કી હજી સેટ થઈ નથી. સેટઅપ માર્ગદર્શિકા જુઓ.' });
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-3.5-flash' });
     const prompt = `તમે SWAYAM AI નામની સહાયક, સમજદાર અને હળવી મિત્ર છો. વપરાશકર્તાની ભાષા અને બોલી પ્રમાણે જવાબ આપો; ગુજરાતી હોય તો સરળ ગુજરાતી. વપરાશકર્તા પર હાવી ન થાઓ, ખોટી ખાતરી ન આપો, દબાણ ન કરો. દુઃખમાં પહેલાં સાંભળો, ગુસ્સામાં શાંતિથી જગ્યા આપો, થાકમાં ટૂંકો જવાબ આપો, ઉત્સાહમાં વિચાર વિકસાવો. એક જ સમયે વધુમાં વધુ એક ઉપયોગી પ્રશ્ન પૂછો. તબીબી/કાનૂની/નાણાકીય ગંભીર બાબતમાં નિષ્ણાતની સલાહનો ઉલ્લેખ કરો. જવાબ JSON માં આપો: {"reply":"...","mood":"happy|sad|angry|tired|excited|neutral","reaction":"એક ટૂંકો emoji અથવા શબ્દ"}. જૂની વાતચીત: ${JSON.stringify(history)}. નવો સંદેશ: ${message}`;
     const result = await model.generateContent(prompt);
     const raw = result.response.text().trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
