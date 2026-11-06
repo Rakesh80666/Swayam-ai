@@ -1,6 +1,3 @@
-
-
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 
 import {
@@ -28,34 +25,36 @@ import {
 
 import { firebaseConfig } from "./firebase-config.js";
 
-const $ = id => document.getElementById(id);
+const $ = (id) => document.getElementById(id);
 
 const status = $("status");
 const email = $("email");
 const password = $("password");
+const loginBtn = $("loginBtn");
+const signupBtn = $("signupBtn");
+const googleBtn = $("googleBtn");
+const resetBtn = $("resetBtn");
 const authMsg = $("authMsg");
+
 const chatPanel = $("chatPanel");
+const logoutBtn = $("logoutBtn");
 const messages = $("messages");
 const messageInput = $("message");
 const sendBtn = $("sendBtn");
 const micBtn = $("micBtn");
+const speakToggle = $("speakToggle");
+const clearBtn = $("clearBtn");
+
 const avatar = $("avatar");
 const greeting = $("greeting");
 const moodLine = $("moodLine");
 const reaction = $("reaction");
 
-const moods = {
-  happy: { emoji: "😊", text: "આજે તમારો ઉત્સાહ સરસ છે!" },
-  sad: { emoji: "🥺", text: "હું અહીં છું, તમારી વાત સાંભળું છું." },
-  angry: { emoji: "😌", text: "ચાલો, શાંતિથી વાત કરીએ." },
-  tired: { emoji: "😴", text: "થોડો આરામ પણ જરૂરી છે." },
-  excited: { emoji: "🤩", text: "વાહ! તમારો વિચાર આગળ વધારીએ." },
-  neutral: { emoji: "🙂", text: "હું તમારી સાથે છું." }
-};
-
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+if (status) status.textContent = "SWAYAM AI તૈયાર છે.";
 
 let currentUser = null;
 let chatHistory = [];
@@ -63,26 +62,78 @@ let busy = false;
 let persona = "female";
 let speakEnabled = true;
 
-if (status) status.textContent = "Firebase જોડાણ તૈયાર છે.";
+const moods = {
+  happy: {
+    color: "#fff0c2",
+    emoji: "😊",
+    text: "આજે તમારો ઉત્સાહ સરસ છે!"
+  },
+  sad: {
+    color: "#dce8f7",
+    emoji: "🥺",
+    text: "હું અહીં છું, તમારી વાત સાંભળું છું."
+  },
+  angry: {
+    color: "#f7dada",
+    emoji: "😌",
+    text: "ચાલો, શાંતિથી વાત કરીએ."
+  },
+  tired: {
+    color: "#e7e1f4",
+    emoji: "😴",
+    text: "થોડો આરામ પણ જરૂરી છે."
+  },
+  excited: {
+    color: "#ffe2ca",
+    emoji: "🤩",
+    text: "વાહ! તમારો વિચાર આગળ વધારીએ."
+  },
+  neutral: {
+    color: "#e5edf0",
+    emoji: "🙂",
+    text: "હું તમારી સાથે છું."
+  }
+};
 
-try {
-  persona = localStorage.getItem("swayamPersona") || "female";
-} catch (error) {}
+function addPersonaSelector() {
+  if ($("personaSelect")) return;
 
-const personaSelect = $("personaSelect");
+  const selector = document.createElement("div");
+  selector.style.cssText = "padding:10px;text-align:center;color:inherit;";
 
-if (personaSelect) {
-  personaSelect.value = persona;
+  selector.innerHTML = `
+    <label for="personaSelect">તમારી સાથી પસંદ કરો: </label>
+    <select id="personaSelect">
+      <option value="female">મહિલા મિત્ર</option>
+      <option value="male">પુરુષ મિત્ર</option>
+    </select>
+  `;
 
-  personaSelect.addEventListener("change", () => {
-    persona = personaSelect.value;
+  chatPanel?.prepend(selector);
 
-    try {
-      localStorage.setItem("swayamPersona", persona);
-    } catch (error) {}
+  const select = $("personaSelect");
 
-    if (avatar) avatar.dataset.persona = persona;
-  });
+  try {
+    persona = localStorage.getItem("swayamPersona") || "female";
+  } catch {
+    persona = "female";
+  }
+
+  if (select) {
+    select.value = persona;
+
+    select.addEventListener("change", () => {
+      persona = select.value;
+
+      try {
+        localStorage.setItem("swayamPersona", persona);
+      } catch (error) {
+        console.log("Preference could not be saved.");
+      }
+
+      updateAvatar("neutral");
+    });
+  }
 }
 
 function updateAvatar(mood = "neutral") {
@@ -90,9 +141,28 @@ function updateAvatar(mood = "neutral") {
 
   document.body.dataset.mood = mood;
 
+  document.documentElement.style.setProperty(
+    "--swayam-mood",
+    data.color
+  );
+
+  const maleFaces = {
+    happy: "😄",
+    sad: "😔",
+    angry: "😌",
+    tired: "😴",
+    excited: "🤩",
+    neutral: "🙂"
+  };
+
+  const face = persona === "male"
+    ? maleFaces[mood] || "🙂"
+    : data.emoji;
+
   if (avatar) {
-    avatar.dataset.mood = mood;
+    avatar.innerHTML = `<span>${face}</span>`;
     avatar.dataset.persona = persona;
+    avatar.dataset.mood = mood;
   }
 
   if (moodLine) moodLine.textContent = data.text;
@@ -104,9 +174,7 @@ function showMessage(text, who) {
 
   const bubble = document.createElement("div");
 
-  bubble.className =
-    who === "user" ? "bubble user" : "bubble bot";
-
+  bubble.className = who === "user" ? "user" : "bot";
   bubble.textContent = text;
 
   messages.appendChild(bubble);
@@ -132,18 +200,18 @@ async function loadMessages() {
 
     const snapshot = await getDocs(q);
 
-    snapshot.forEach(doc => {
-      const item = doc.data();
+    snapshot.forEach((doc) => {
+      const data = doc.data();
 
-      if (item.role && item.text) {
+      if (data.role && data.text) {
         chatHistory.push({
-          role: item.role === "assistant" ? "model" : item.role,
-          text: item.text
+          role: data.role === "assistant" ? "model" : data.role,
+          text: data.text
         });
 
         showMessage(
-          item.text,
-          item.role === "user" ? "user" : "ai"
+          data.text,
+          data.role === "user" ? "user" : "ai"
         );
       }
     });
@@ -180,20 +248,29 @@ function speak(text) {
 
   utterance.lang = "gu-IN";
   utterance.rate = 0.9;
-  utterance.pitch = persona === "female" ? 1.08 : 0.92;
+  utterance.pitch = persona === "female" ? 1.1 : 0.9;
 
-  utterance.onstart = () => avatar?.classList.add("speaking");
-  utterance.onend = () => avatar?.classList.remove("speaking");
-  utterance.onerror = () => avatar?.classList.remove("speaking");
+  utterance.onstart = () => {
+    avatar?.classList.add("speaking");
+  };
+
+  utterance.onend = () => {
+    avatar?.classList.remove("speaking");
+  };
+
+  utterance.onerror = () => {
+    avatar?.classList.remove("speaking");
+  };
 
   speechSynthesis.speak(utterance);
 }
 
-$("speakToggle")?.addEventListener("click", () => {
+speakToggle?.addEventListener("click", () => {
   speakEnabled = !speakEnabled;
 
-  $("speakToggle").textContent =
-    speakEnabled ? "🔊 અવાજ ચાલુ" : "🔇 અવાજ બંધ";
+  speakToggle.textContent = speakEnabled
+    ? "🔊 અવાજ ચાલુ"
+    : "🔇 અવાજ બંધ";
 
   if (!speakEnabled && "speechSynthesis" in window) {
     speechSynthesis.cancel();
@@ -216,7 +293,10 @@ async function sendMessage() {
 
   showMessage(text, "user");
 
-  chatHistory.push({ role: "user", text });
+  chatHistory.push({
+    role: "user",
+    text
+  });
 
   await saveMessage("user", text);
 
@@ -225,7 +305,9 @@ async function sendMessage() {
   try {
     const response = await fetch("/api/chat", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify({
         message: text,
         history: chatHistory.slice(-8),
@@ -240,11 +322,15 @@ async function sendMessage() {
     }
 
     const reply = data.reply || "હું સાંભળું છું.";
+
     const mood = moods[data.mood] ? data.mood : "neutral";
 
     showMessage(reply, "ai");
 
-    chatHistory.push({ role: "model", text: reply });
+    chatHistory.push({
+      role: "model",
+      text: reply
+    });
 
     await saveMessage("assistant", reply);
 
@@ -272,7 +358,7 @@ async function sendMessage() {
   }
 }
 
-$("loginBtn")?.addEventListener("click", async () => {
+loginBtn?.addEventListener("click", async () => {
   try {
     await signInWithEmailAndPassword(
       auth,
@@ -284,13 +370,12 @@ $("loginBtn")?.addEventListener("click", async () => {
 
   } catch (error) {
     if (authMsg) {
-      authMsg.textContent =
-        "લૉગિન થઈ શક્યું નથી: " + error.message;
+      authMsg.textContent = "લૉગિન થઈ શક્યું નથી: " + error.message;
     }
   }
 });
 
-$("signupBtn")?.addEventListener("click", async () => {
+signupBtn?.addEventListener("click", async () => {
   try {
     await createUserWithEmailAndPassword(
       auth,
@@ -302,44 +387,36 @@ $("signupBtn")?.addEventListener("click", async () => {
 
   } catch (error) {
     if (authMsg) {
-      authMsg.textContent =
-        "એકાઉન્ટ બની શક્યું નથી: " + error.message;
+      authMsg.textContent = "એકાઉન્ટ બની શક્યું નથી: " + error.message;
     }
   }
 });
 
-$("googleBtn")?.addEventListener("click", async () => {
+googleBtn?.addEventListener("click", async () => {
   try {
     await signInWithPopup(auth, new GoogleAuthProvider());
-
   } catch (error) {
     if (authMsg) {
-      authMsg.textContent =
-        "Google Login સમસ્યા: " + error.message;
+      authMsg.textContent = "Google Login સમસ્યા: " + error.message;
     }
   }
 });
 
-$("resetBtn")?.addEventListener("click", async () => {
+resetBtn?.addEventListener("click", async () => {
   try {
-    await sendPasswordResetEmail(
-      auth,
-      email.value.trim()
-    );
+    await sendPasswordResetEmail(auth, email.value.trim());
 
     if (authMsg) {
       authMsg.textContent = "પાસવર્ડ રીસેટ લિંક મોકલી છે.";
     }
-
   } catch (error) {
     if (authMsg) {
-      authMsg.textContent =
-        "ઇમેઇલ તપાસો: " + error.message;
+      authMsg.textContent = "ઇમેઇલ તપાસો: " + error.message;
     }
   }
 });
 
-$("logoutBtn")?.addEventListener("click", async () => {
+logoutBtn?.addEventListener("click", async () => {
   try {
     await signOut(auth);
   } catch (error) {
@@ -349,14 +426,14 @@ $("logoutBtn")?.addEventListener("click", async () => {
 
 sendBtn?.addEventListener("click", sendMessage);
 
-messageInput?.addEventListener("keydown", event => {
+messageInput?.addEventListener("keydown", (event) => {
   if (event.key === "Enter" && !event.shiftKey) {
     event.preventDefault();
     sendMessage();
   }
 });
 
-$("clearBtn")?.addEventListener("click", async () => {
+clearBtn?.addEventListener("click", async () => {
   if (!currentUser) return;
 
   if (!confirm("તમારી જૂની વાતચીત કાઢી નાખવી છે?")) return;
@@ -365,7 +442,9 @@ $("clearBtn")?.addEventListener("click", async () => {
     const snapshot = await getDocs(chatCollection());
     const batch = writeBatch(db);
 
-    snapshot.forEach(doc => batch.delete(doc.ref));
+    snapshot.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
 
     await batch.commit();
 
@@ -382,8 +461,7 @@ $("clearBtn")?.addEventListener("click", async () => {
 });
 
 const SpeechRecognition =
-  window.SpeechRecognition ||
-  window.webkitSpeechRecognition;
+  window.SpeechRecognition || window.webkitSpeechRecognition;
 
 if (micBtn && SpeechRecognition) {
   const recognition = new SpeechRecognition();
@@ -400,7 +478,7 @@ if (micBtn && SpeechRecognition) {
     }
   });
 
-  recognition.onresult = event => {
+  recognition.onresult = (event) => {
     const spokenText = event.results[0][0].transcript;
 
     if (messageInput) {
@@ -421,7 +499,7 @@ if (micBtn && SpeechRecognition) {
   });
 }
 
-onAuthStateChanged(auth, async user => {
+onAuthStateChanged(auth, async (user) => {
   currentUser = user;
 
   const authPanel = $("authPanel");
@@ -429,7 +507,12 @@ onAuthStateChanged(auth, async user => {
   if (user) {
     if (authPanel) authPanel.style.display = "none";
 
-    chatPanel?.classList.remove("hidden");
+    if (chatPanel) {
+      chatPanel.classList.remove("hidden");
+      chatPanel.style.display = "block";
+    }
+
+    addPersonaSelector();
 
     if (greeting) {
       greeting.textContent =
@@ -442,11 +525,13 @@ onAuthStateChanged(auth, async user => {
   } else {
     if (authPanel) authPanel.style.display = "";
 
-    chatPanel?.classList.add("hidden");
+    if (chatPanel) {
+      chatPanel.classList.add("hidden");
+      chatPanel.style.display = "";
+    }
 
     chatHistory = [];
 
     if (messages) messages.innerHTML = "";
   }
 });
-
