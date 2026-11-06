@@ -539,21 +539,20 @@ if (micBtn && SpeechRecognition) {
   });
 }
 
-// Authentication state
+ Authentication state
 onAuthStateChanged(auth, async (user) => {
   currentUser = user;
 
-  if (chatPanel) {
-    chatPanel.style.display = user ? "" : "none";
-  }
-
   const authPanel = $("authPanel");
 
-  if (authPanel) {
-    authPanel.style.display = user ? "none" : "";
-  }
-
   if (user) {
+    if (authPanel) authPanel.style.display = "none";
+
+    if (chatPanel) {
+      chatPanel.classList.remove("hidden");
+      chatPanel.style.display = "block";
+    }
+
     if (greeting) {
       greeting.textContent =
         "નમસ્તે! SWAYAM AIમાં તમારું સ્વાગત છે.";
@@ -563,17 +562,15 @@ onAuthStateChanged(auth, async (user) => {
     updateAvatar("neutral");
 
   } else {
+    if (authPanel) authPanel.style.display = "";
+
+    if (chatPanel) {
+      chatPanel.classList.add("hidden");
+      chatPanel.style.display = "";
+    }
+
     chatHistory = [];
 
     if (messages) messages.innerHTML = "";
   }
 });
-
-// Start app
-addPersonaSelector();
-updateAvatar("neutral");
-
-if (status) {
-  status.textContent = "SWAYAM AI તૈયાર છે.";
-}
-
