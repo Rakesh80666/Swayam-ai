@@ -1,4 +1,5 @@
 
+
 import express from 'express';
 import dotenv from 'dotenv';
 import { GoogleGenerativeAI } from '@google/generative-ai';
@@ -24,64 +25,66 @@ app.get('/api/health', (_req, res) => {
 app.post('/api/chat', async (req, res) => {
   try {
     const message = String(req.body?.message || '').trim();
-
     const history = Array.isArray(req.body?.history)
       ? req.body.history.slice(-8)
       : [];
 
-    const persona =
-      req.body?.persona === 'male' ? 'male' : 'female';
+    const persona = req.body?.persona === 'male'
+      ? 'male'
+      : 'female';
 
     if (!message) {
-      return res.status(400).json({
-        error: 'તમારો સંદેશ લખો.'
-      });
+      return res.status(400).json({ error: 'તમારો સંદેશ લખો.' });
     }
 
     if (!process.env.GEMINI_API_KEY) {
       return res.status(503).json({
-        error: 'AI સર્વર કી હજી સેટ થઈ નથી.'
+        error: 'AI સર્વર કી હજી સેટ થઈ નથી. સેટઅપ માર્ગદર્શિકા જુઓ.'
       });
     }
 
-    const genAI = new GoogleGenerativeAI(
-      process.env.GEMINI_API_KEY
-    );
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
     const model = genAI.getGenerativeModel({
       model: 'gemini-3.5-flash'
     });
 
-    const companion =
-      persona === 'male' ? 'પુરુષ મિત્ર' : 'મહિલા મિત્ર';
+    const companionStyle = persona === 'female'
+      ? 'તમે એક હૂંફાળી, સમજદાર મહિલા મિત્ર છો.'
+      : 'તમે એક હૂંફાળા, સમજદાર પુરુષ મિત્ર છો.';
 
     const prompt = `
-તમે SWAYAM AI છો — વપરાશકર્તાની ${companion} જેવી
-સમજદાર, સહાનુભૂતિપૂર્ણ અને સ્વાભાવિક સાથી.
+તમે SWAYAM AI નામના વ્યક્તિગત AI સાથી છો.
 
-વપરાશકર્તાની ભાષા અને બોલી પ્રમાણે જવાબ આપો.
-ગુજરાતી હોય તો સરળ, બોલચાલની ગુજરાતી વાપરો.
+તમારી ઓળખ:
+${companionStyle}
 
-તમારી ઓળખ ${companion} તરીકે રાખો.
-શિક્ષકની જેમ ઉપદેશ ન આપો; મિત્રની જેમ સાંભળો.
+તમારો સ્વભાવ:
+- મિત્રની જેમ વાત કરો, શિક્ષકની જેમ નહીં.
+- વપરાશકર્તા જે ભાષા અને બોલી વાપરે તે પ્રમાણે જવાબ આપો.
+- ગુજરાતી હોય તો સરળ અને સ્વાભાવિક ગુજરાતી વાપરો.
+- વપરાશકર્તા પર હાવી ન થાઓ.
+- ખોટી ખાતરી કે ખોટા વચનો ન આપો.
+- દુઃખમાં પહેલાં સાંભળો અને હૂંફ આપો.
+- ગુસ્સામાં શાંતિથી અને સન્માનથી વાત કરો.
+- થાકમાં ટૂંકો અને હળવો જવાબ આપો.
+- ઉત્સાહમાં વિચારને આગળ વધારવામાં મદદ કરો.
+- એક સમયે વધુમાં વધુ એક ઉપયોગી પ્રશ્ન પૂછો.
 
-મૂડ ઓળખતી વખતે હાલનો સંદેશ અને તાજેતરની વાતચીત
-બંને ધ્યાનમાં લો. સ્પષ્ટ સંકેત ન હોય તો neutral પસંદ કરો.
-અંદાજને હકીકત તરીકે ન કહો.
+મૂડ સમજવાની રીત:
+- હાલના સંદેશ અને અગાઉની વાતચીત બંને ધ્યાનથી જુઓ.
+- શબ્દો, ભાવના અને વાત કરવાની રીત પરથી સંભવિત મૂડ પસંદ કરો.
+- પૂરતી માહિતી ન હોય તો neutral પસંદ કરો.
+- માત્ર એક પ્રશ્ન પરથી વપરાશકર્તાના સ્વભાવ વિશે નિર્ણય ન કરો.
 
-મૂડ પ્રમાણે વર્તન:
-sad હોય તો પહેલાં લાગણી સમજો.
-angry હોય તો શાંત અને ટૂંકો જવાબ આપો.
-tired હોય તો હળવો ટૂંકો જવાબ આપો.
-happy અથવા excited હોય તો ઉત્સાહથી જોડાઓ.
+જવાબ માત્ર આ JSON સ્વરૂપમાં આપો:
+{
+  "reply": "તમારો જવાબ",
+  "mood": "happy અથવા sad અથવા angry અથવા tired અથવા excited અથવા neutral",
+  "reaction": "એક યોગ્ય emoji"
+}
 
-એક જ સમયે વધુમાં વધુ એક ઉપયોગી પ્રશ્ન પૂછો.
-ખોટી ખાતરી ન આપો અને વપરાશકર્તા પર હાવી ન થાઓ.
-
-જવાબ ફક્ત માન્ય JSON માં આપો:
-{"reply":"જવાબ","mood":"happy|sad|angry|tired|excited|neutral","reaction":"એક ટૂંકો emoji"}
-
-જૂની વાતચીત:
+અગાઉની વાતચીત:
 ${JSON.stringify(history)}
 
 હાલનો સંદેશ:
@@ -118,14 +121,12 @@ ${message}
 
     res.json({
       reply: String(data.reply || 'હું સાંભળું છું.').slice(0, 4000),
-      mood: allowed.includes(data.mood)
-        ? data.mood
-        : 'neutral',
+      mood: allowed.includes(data.mood) ? data.mood : 'neutral',
       reaction: String(data.reaction || '🙂').slice(0, 12)
     });
 
   } catch (err) {
-    console.error('Chat error:', err);
+    console.error('SWAYAM AI error:', err);
 
     res.status(500).json({
       error: 'હમણાં જવાબ મળી શક્યો નથી. થોડી વાર પછી ફરી પ્રયાસ કરો.'
@@ -142,4 +143,5 @@ const port = Number(process.env.PORT || 8080);
 app.listen(port, '0.0.0.0', () => {
   console.log(`SWAYAM AI listening on ${port}`);
 });
+
 
