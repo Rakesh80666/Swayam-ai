@@ -3,7 +3,7 @@ body[data-mood="happy"],body[data-mood="excited"]{--bg:#fff5e8;--accent:#d58b42;
 .composer input {
   flex: 1 1 auto;
   min-width: 0;
-  width: 0;
+  width: 100℅;
   display: block;
   padding: 14px;
   color: var(--ink);
