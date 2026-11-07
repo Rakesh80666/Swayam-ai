@@ -317,3 +317,169 @@ async function saveMessage(role, text) {
     console.error("Save error:", error);
   }
 }
+// Select a voice matching the reply language.
+function getPreferredVoice(languageCode = "gu-IN") {
+  const voices = window.speechSynthesis.getVoices();
+
+  const matchingVoices = voices.filter((voice) =>
+    voice.lang.toLowerCase().startsWith(
+      languageCode.toLowerCase().split("-")[0]
+    )
+  );
+
+  if (!matchingVoices.length) return null;
+
+  const femaleNames =
+    /female|woman|zira|heera|veena|kalpana|lekha|priya|aditi/i;
+
+  const maleNames =
+    /male|man|ravi|hemant|rishi|arjun|madhur/i;
+
+  const pattern = persona === "male"
+    ? maleNames
+    : femaleNames;
+
+  return matchingVoices.find((voice) =>
+    pattern.test(voice.name + " " + voice.voiceURI)
+  ) || matchingVoices[0];
+}
+
+function speak(text) {
+  if (!("speechSynthesis" in window) || !speakEnabled) return;
+
+  speechSynthesis.cancel();
+
+  const utterance = new SpeechSynthesisUtterance(text);
+
+  const languageCode = detectReplyLanguage(text);
+  const selectedVoice = getPreferredVoice(languageCode);
+
+  utterance.lang = languageCode;
+
+  if (selectedVoice) {
+    utterance.voice = selectedVoice;
+    utterance.lang = selectedVoice.lang;
+  }
+
+  utterance.rate = 0.9;
+  utterance.pitch = 1;
+
+  utterance.onstart = () => {
+    avatar?.classList.add("speaking");
+  };
+
+  utterance.onend = () => {
+    avatar?.classList.remove("speaking");
+  };
+
+  utterance.onerror = () => {
+    avatar?.classList.remove("speaking");
+  };
+
+  speechSynthesis.speak(utterance);
+}
+
+if ("speechSynthesis" in window) {
+  speechSynthesis.onvoiceschanged = () => {
+    speechSynthesis.getVoices();
+  };
+}
+
+speakToggle?.addEventListener("click", () => {
+  speakEnabled = !speakEnabled;
+
+  speakToggle.textContent = speakEnabled
+    ? "🔊 અવાજ ચાલુ"
+    : "🔇 અવાજ બંધ";
+
+  if (!speakEnabled && "speechSynthesis" in window) {
+    speechSynthesis.cancel();
+    avatar?.classList.remove("speaking");
+  }
+});
+
+async function sendMessage() {
+  if (busy || !currentUser) return;
+
+  const text = messageInput?.value.trim();
+
+  if (!text) return;
+
+  busy = true;
+
+  if (sendBtn) sendBtn.disabled = true;
+
+  messageInput.value = "";
+
+  showMessage(text, "user");
+
+  chatHistory.push({
+    role: "user",
+    text
+  });
+
+  // Save in background so AI reply is not delayed.
+  saveMessage("user", text);
+
+  if (greeting) {
+    greeting.textContent = "હું તમને સાંભળું છું...";
+  }
+
+  try {
+    const language = detectTextLanguage(text);
+
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        message: text,
+        history: chatHistory.slice(-8),
+        persona,
+        language
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "AI જવાબ આપી શક્યું નથી.");
+    }
+
+    const reply = data.reply || "હું સાંભળું છું.";
+    const mood = moods[data.mood] ? data.mood : "neutral";
+
+    showMessage(reply, "ai");
+
+    chatHistory.push({
+      role: "model",
+      text: reply
+    });
+
+    // Save assistant reply in background.
+    saveMessage("assistant", reply);
+
+    updateAvatar(mood);
+    speak(reply);
+
+    if (greeting) {
+      greeting.textContent = "SWAYAM AI તમારી સાથે છે.";
+    }
+
+  } catch (error) {
+    console.error("Chat error:", error);
+
+    showMessage(
+      error.message || "કનેક્શનની સમસ્યા છે. ફરી પ્રયાસ કરો.",
+      "ai"
+    );
+
+  } finally {
+    busy = false;
+
+    if (sendBtn) sendBtn.disabled = false;
+
+    messageInput?.focus();
+  }
+}
