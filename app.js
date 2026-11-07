@@ -402,6 +402,8 @@ function updateVoiceInfo() {
 
   console.log("SWAYAM AI AVAILABLE VOICES:", voices);
   console.log("SWAYAM AI GUJARATI VOICES:", gujaratiVoices);
+  console.log("VOICE COUNT:", gujaratiVoices.length);
+console.log("VOICE DETAILS:", gujaratiVoices.map(v => ({name:v.name, lang:v.lang, uri:v.voiceURI})));
 }
 
 // પસંદ કરેલી ભાષા અને સાથી પ્રમાણે અવાજ પસંદ કરો
