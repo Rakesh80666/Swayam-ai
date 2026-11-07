@@ -283,16 +283,81 @@ async function sendMessage() {
   if (busy || !currentUser) return;
 
   const text = messageInput?.value.trim();
-
   if (!text) return;
 
   busy = true;
-
   if (sendBtn) sendBtn.disabled = true;
 
   messageInput.value = "";
-
   showMessage(text, "user");
 
   chatHistory.push({
     role: "user",
+    text
+  });
+
+  // Firebase save in background - do not wait
+  saveMessage("user", text);
+
+  if (greeting) {
+    greeting.textContent = "હું તમને સાંભળું છું...";
+  }
+
+  try {
+    const language = detectTextLanguage(text);
+
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        message: text,
+        history: chatHistory.slice(-8),
+        persona,
+        language
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "AI જવાબ આપી શક્યું નથી.");
+    }
+
+    const reply = data.reply || "હું સાંભળું છું.";
+    const mood = moods[data.mood] ? data.mood : "neutral";
+
+    showMessage(reply, "ai");
+
+    chatHistory.push({
+      role: "model",
+      text: reply
+    });
+
+    // Update mood and start voice immediately
+    updateAvatar(mood);
+    speak(reply);
+
+    // Firebase save in background
+    saveMessage("assistant", reply);
+
+    if (greeting) {
+      greeting.textContent = "SWAYAM AI તમારી સાથે છે.";
+    }
+
+  } catch (error) {
+    console.error("Chat error:", error);
+
+    showMessage(
+      error.message || "કનેક્શનની સમસ્યા છે. ફરી પ્રયાસ કરો.",
+      "ai"
+    );
+
+  } finally {
+    busy = false;
+
+    if (sendBtn) sendBtn.disabled = false;
+    messageInput?.focus();
+  }
+}
