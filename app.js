@@ -1,5 +1,6 @@
 
 
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 
 import {
@@ -65,6 +66,8 @@ let persona = "female";
 let speakEnabled = true;
 let selectedLanguage = "auto";
 
+let availableVoices = [];
+
 const moods = {
   happy: {
     color: "#fff0c2",
@@ -98,6 +101,7 @@ const moods = {
   }
 };
 
+// ભાષા ઓળખ
 function detectTextLanguage(text) {
   if (selectedLanguage !== "auto") {
     return selectedLanguage;
@@ -116,6 +120,7 @@ function detectReplyLanguage(text) {
   return "en-IN";
 }
 
+// સાથી પસંદગી અને ભાષા પસંદગી
 function addPersonaSelector() {
   if ($("personaSelect")) return;
 
@@ -132,16 +137,24 @@ function addPersonaSelector() {
         <option value="male">પુરુષ મિત્ર</option>
       </select>
     </div>
+
     <div>
       <label for="languageSelect">ભાષા પસંદ કરો: </label>
       <select id="languageSelect">
         <option value="auto">ઓટો ઓળખો</option>
         <option value="gu-IN">ગુજરાતી</option>
         <option value="hi-IN">હિન્દી</option>
+        <option value="en-IN">અંગ્રેજી</option>
       </select>
     </div>
+
     <p id="languageInfo" style="font-size:12px;margin:6px 0;">
       લખાણની ભાષા ઓળખવાનો પ્રયાસ થશે.
+    </p>
+
+    <p id="voiceInfo"
+       style="font-size:12px;margin:6px 0;word-break:break-word;">
+      ફોનના અવાજ તપાસી રહ્યા છીએ...
     </p>
   `;
 
@@ -174,6 +187,8 @@ function addPersonaSelector() {
       if ("speechSynthesis" in window) {
         speechSynthesis.cancel();
       }
+
+      updateVoiceInfo();
     });
   }
 
@@ -190,17 +205,22 @@ function addPersonaSelector() {
       const info = $("languageInfo");
 
       if (info) {
-        info.textContent =
-          selectedLanguage === "auto"
-            ? "લખાણની ભાષા ઓળખવાનો પ્રયાસ થશે."
-            : selectedLanguage === "gu-IN"
-              ? "ગુજરાતી ભાષા પસંદ કરાઈ છે."
-              : "હિન્દી ભાષા પસંદ કરાઈ છે.";
+        const labels = {
+          auto: "લખાણની ભાષા ઓળખવાનો પ્રયાસ થશે.",
+          "gu-IN": "ગુજરાતી ભાષા પસંદ કરાઈ છે.",
+          "hi-IN": "હિન્દી ભાષા પસંદ કરાઈ છે.",
+          "en-IN": "અંગ્રેજી ભાષા પસંદ કરાઈ છે."
+        };
+
+        info.textContent = labels[selectedLanguage] || labels.auto;
       }
     });
   }
+
+  updateVoiceInfo();
 }
 
+// મૂડ અને અવતાર
 function updateAvatar(mood = "neutral") {
   const data = moods[mood] || moods.neutral;
 
@@ -304,17 +324,117 @@ async function saveMessage(role, text) {
   }
 }
 
+// ફોનના બ્રાઉઝરમાં ઉપલબ્ધ અવાજો મેળવો
+function loadAvailableVoices() {
+  if (!("speechSynthesis" in window)) {
+    availableVoices = [];
+    return [];
+  }
+
+  availableVoices = speechSynthesis.getVoices();
+
+  return availableVoices;
+}
+
+// Gujarati Voice 1 અને Voice 2ની તપાસ
+function updateVoiceInfo() {
+  const info = $("voiceInfo");
+
+  if (!("speechSynthesis" in window)) {
+    if (info) {
+      info.textContent = "આ બ્રાઉઝરમાં Speech Synthesis ઉપલબ્ધ નથી.";
+    }
+    return;
+  }
+
+  const voices = loadAvailableVoices();
+
+  if (!voices.length) {
+    if (info) {
+      info.textContent =
+        "બ્રાઉઝર હજી અવાજ લોડ કરી રહ્યું છે. થોડી વાર રાહ જુઓ.";
+    }
+    return;
+  }
+
+  const gujaratiVoices = voices.filter((voice) =>
+    voice.lang.toLowerCase().startsWith("gu")
+  );
+
+  const voice1 = gujaratiVoices.find((voice) =>
+    /voice[\s_-]*1\b|gujarati.*1\b|1.*gujarati/i.test(
+      voice.name + " " + voice.voiceURI
+    )
+  );
+
+  const voice2 = gujaratiVoices.find((voice) =>
+    /voice[\s_-]*2\b|gujarati.*2\b|2.*gujarati/i.test(
+      voice.name + " " + voice.voiceURI
+    )
+  );
+
+  let result = "બ્રાઉઝરમાં Gujarati અવાજ: ";
+
+  if (voice1) {
+    result += "Voice 1 મળ્યો";
+  } else {
+    result += "Voice 1 નામથી ઓળખાયો નથી";
+  }
+
+  result += " | ";
+
+  if (voice2) {
+    result += "Voice 2 મળ્યો";
+  } else {
+    result += "Voice 2 નામથી ઓળખાયો નથી";
+  }
+
+  if (!gujaratiVoices.length) {
+    result += " | Gujarati અવાજ બ્રાઉઝરમાં મળ્યો નથી.";
+  } else {
+    result += " | ઉપલબ્ધ: " +
+      gujaratiVoices.map((voice) =>
+        `${voice.name} (${voice.lang})`
+      ).join(", ");
+  }
+
+  if (info) info.textContent = result;
+
+  console.log("SWAYAM AI AVAILABLE VOICES:", voices);
+  console.log("SWAYAM AI GUJARATI VOICES:", gujaratiVoices);
+}
+
+// પસંદ કરેલી ભાષા અને સાથી પ્રમાણે અવાજ પસંદ કરો
 function getPreferredVoice(languageCode = "gu-IN") {
-  const voices = window.speechSynthesis.getVoices();
+  const voices = loadAvailableVoices();
+
+  if (!voices.length) return null;
+
+  const languagePrefix = languageCode
+    .toLowerCase()
+    .split("-")[0];
 
   const matchingVoices = voices.filter((voice) =>
-    voice.lang.toLowerCase().startsWith(
-      languageCode.toLowerCase().split("-")[0]
-    )
+    voice.lang.toLowerCase().startsWith(languagePrefix)
   );
 
   if (!matchingVoices.length) return null;
 
+  // Gujarati માટે ખાસ Voice 1 / Voice 2
+  if (languagePrefix === "gu") {
+    const voiceNumber = persona === "male" ? 2 : 1;
+
+    const exactVoice = matchingVoices.find((voice) =>
+      new RegExp(
+        `voice[\\s_-]*${voiceNumber}\\b|gujarati.*${voiceNumber}\\b|${voiceNumber}.*gujarati`,
+        "i"
+      ).test(voice.name + " " + voice.voiceURI)
+    );
+
+    if (exactVoice) return exactVoice;
+  }
+
+  // Hindi / English માટે નામ પરથી gender ઓળખવાનો પ્રયાસ
   const femaleNames =
     /female|woman|zira|heera|veena|kalpana|lekha|priya|aditi/i;
 
@@ -325,11 +445,15 @@ function getPreferredVoice(languageCode = "gu-IN") {
     ? maleNames
     : femaleNames;
 
-  return matchingVoices.find((voice) =>
+  const genderVoice = matchingVoices.find((voice) =>
     pattern.test(voice.name + " " + voice.voiceURI)
-  ) || matchingVoices[0];
+  );
+
+  // નામથી gender ન ઓળખાય તો ભાષાનો પ્રથમ ઉપલબ્ધ અવાજ
+  return genderVoice || matchingVoices[0];
 }
 
+// બોલવાનો અવાજ
 function speak(text) {
   if (!("speechSynthesis" in window) || !speakEnabled) return;
 
@@ -358,16 +482,21 @@ function speak(text) {
     avatar?.classList.remove("speaking");
   };
 
-  utterance.onerror = () => {
+  utterance.onerror = (event) => {
+    console.error("Speech error:", event);
     avatar?.classList.remove("speaking");
   };
 
   speechSynthesis.speak(utterance);
 }
 
+// બ્રાઉઝર અવાજ લોડ કરે ત્યારે ફરી તપાસ
 if ("speechSynthesis" in window) {
+  loadAvailableVoices();
+
   speechSynthesis.onvoiceschanged = () => {
-    speechSynthesis.getVoices();
+    loadAvailableVoices();
+    updateVoiceInfo();
   };
 }
 
@@ -384,7 +513,7 @@ speakToggle?.addEventListener("click", () => {
   }
 });
 
-// Improved chat function with visible diagnostics
+// Chat function
 async function sendMessage() {
   if (busy || !currentUser) return;
 
@@ -507,6 +636,7 @@ async function sendMessage() {
   }
 }
 
+// Login
 loginBtn?.addEventListener("click", async () => {
   try {
     await signInWithEmailAndPassword(
@@ -525,6 +655,7 @@ loginBtn?.addEventListener("click", async () => {
   }
 });
 
+// Signup
 signupBtn?.addEventListener("click", async () => {
   try {
     await createUserWithEmailAndPassword(
@@ -543,6 +674,7 @@ signupBtn?.addEventListener("click", async () => {
   }
 });
 
+// Google Login
 googleBtn?.addEventListener("click", async () => {
   try {
     await signInWithPopup(auth, new GoogleAuthProvider());
@@ -554,6 +686,7 @@ googleBtn?.addEventListener("click", async () => {
   }
 });
 
+// Password reset
 resetBtn?.addEventListener("click", async () => {
   try {
     await sendPasswordResetEmail(auth, email.value.trim());
@@ -568,6 +701,7 @@ resetBtn?.addEventListener("click", async () => {
   }
 });
 
+// Logout
 logoutBtn?.addEventListener("click", async () => {
   try {
     await signOut(auth);
@@ -585,6 +719,7 @@ messageInput?.addEventListener("keydown", (event) => {
   }
 });
 
+// Chat history clear
 clearBtn?.addEventListener("click", async () => {
   if (!currentUser) return;
 
@@ -612,6 +747,7 @@ clearBtn?.addEventListener("click", async () => {
   }
 });
 
+// Microphone / Voice Input
 const SpeechRecognition =
   window.SpeechRecognition || window.webkitSpeechRecognition;
 
@@ -627,6 +763,8 @@ if (micBtn && SpeechRecognition) {
         recognition.lang = "gu-IN";
       } else if (selectedLanguage === "hi-IN") {
         recognition.lang = "hi-IN";
+      } else if (selectedLanguage === "en-IN") {
+        recognition.lang = "en-IN";
       } else {
         const deviceLanguage =
           (navigator.language || "gu-IN").toLowerCase();
@@ -634,11 +772,13 @@ if (micBtn && SpeechRecognition) {
         recognition.lang =
           deviceLanguage.startsWith("hi")
             ? "hi-IN"
-            : "gu-IN";
+            : deviceLanguage.startsWith("en")
+              ? "en-IN"
+              : "gu-IN";
 
         if ($("languageInfo")) {
           $("languageInfo").textContent =
-            "માઇક માટે ફોનની ભાષા મુજબ પ્રયાસ થશે. જરૂર પડે તો ગુજરાતી અથવા હિન્દી પસંદ કરો.";
+            "માઇક માટે ફોનની ભાષા મુજબ પ્રયાસ થશે. જરૂર પડે તો ભાષા બદલો.";
         }
       }
 
@@ -687,6 +827,7 @@ if (micBtn && SpeechRecognition) {
   });
 }
 
+// Firebase Authentication state
 onAuthStateChanged(auth, async (user) => {
   currentUser = user;
 
@@ -709,6 +850,7 @@ onAuthStateChanged(auth, async (user) => {
 
     await loadMessages();
     updateAvatar("neutral");
+    updateVoiceInfo();
 
   } else {
     if (authPanel) authPanel.style.display = "";
@@ -723,3 +865,4 @@ onAuthStateChanged(auth, async (user) => {
     if (messages) messages.innerHTML = "";
   }
 });
+
