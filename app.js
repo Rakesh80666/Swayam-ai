@@ -1,3 +1,5 @@
+
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 
 import {
@@ -101,25 +103,15 @@ function detectTextLanguage(text) {
     return selectedLanguage;
   }
 
-  if (/[\u0A80-\u0AFF]/.test(text)) {
-    return "gu-IN";
-  }
-
-  if (/[\u0900-\u097F]/.test(text)) {
-    return "hi-IN";
-  }
+  if (/[\u0A80-\u0AFF]/.test(text)) return "gu-IN";
+  if (/[\u0900-\u097F]/.test(text)) return "hi-IN";
 
   return "auto";
 }
 
 function detectReplyLanguage(text) {
-  if (/[\u0A80-\u0AFF]/.test(text)) {
-    return "gu-IN";
-  }
-
-  if (/[\u0900-\u097F]/.test(text)) {
-    return "hi-IN";
-  }
+  if (/[\u0A80-\u0AFF]/.test(text)) return "gu-IN";
+  if (/[\u0900-\u097F]/.test(text)) return "hi-IN";
 
   return "en-IN";
 }
@@ -140,7 +132,6 @@ function addPersonaSelector() {
         <option value="male">પુરુષ મિત્ર</option>
       </select>
     </div>
-
     <div>
       <label for="languageSelect">ભાષા પસંદ કરો: </label>
       <select id="languageSelect">
@@ -149,7 +140,6 @@ function addPersonaSelector() {
         <option value="hi-IN">હિન્દી</option>
       </select>
     </div>
-
     <p id="languageInfo" style="font-size:12px;margin:6px 0;">
       લખાણની ભાષા ઓળખવાનો પ્રયાસ થશે.
     </p>
@@ -177,9 +167,7 @@ function addPersonaSelector() {
 
       try {
         localStorage.setItem("swayamPersona", persona);
-      } catch (error) {
-        console.log("Preference could not be saved.");
-      }
+      } catch {}
 
       updateAvatar("neutral");
 
@@ -197,9 +185,7 @@ function addPersonaSelector() {
 
       try {
         localStorage.setItem("swayamLanguage", selectedLanguage);
-      } catch (error) {
-        console.log("Language preference could not be saved.");
-      }
+      } catch {}
 
       const info = $("languageInfo");
 
@@ -317,7 +303,7 @@ async function saveMessage(role, text) {
     console.error("Save error:", error);
   }
 }
-// Select a voice matching the reply language.
+
 function getPreferredVoice(languageCode = "gu-IN") {
   const voices = window.speechSynthesis.getVoices();
 
@@ -398,6 +384,7 @@ speakToggle?.addEventListener("click", () => {
   }
 });
 
+// Improved chat function with visible diagnostics
 async function sendMessage() {
   if (busy || !currentUser) return;
 
@@ -418,7 +405,6 @@ async function sendMessage() {
     text
   });
 
-  // Save in background so AI reply is not delayed.
   saveMessage("user", text);
 
   if (greeting) {
@@ -441,13 +427,46 @@ async function sendMessage() {
       })
     });
 
-    const data = await response.json();
+    const responseText = await response.text();
 
-    if (!response.ok) {
-      throw new Error(data.error || "AI જવાબ આપી શક્યું નથી.");
+    console.log("SWAYAM AI HTTP STATUS:", response.status);
+    console.log("SWAYAM AI SERVER RESPONSE:", responseText);
+
+    let data;
+
+    try {
+      data = JSON.parse(responseText);
+    } catch {
+      throw new Error(
+        "સર્વરનો જવાબ JSON સ્વરૂપમાં નથી. HTTP Status: " +
+        response.status
+      );
     }
 
-    const reply = data.reply || "હું સાંભળું છું.";
+    if (!response.ok) {
+      throw new Error(
+        data.error ||
+        "AI સર્વર Error. HTTP Status: " + response.status
+      );
+    }
+
+    console.log("SWAYAM AI SERVER DATA:", data);
+
+    if (!data || typeof data.reply !== "string" || !data.reply.trim()) {
+      showMessage(
+        "સર્વર સાથે જોડાણ થયું, પરંતુ AI નો જવાબ ખાલી મળ્યો. વિગતો: " +
+        JSON.stringify(data),
+        "ai"
+      );
+
+      if (greeting) {
+        greeting.textContent = "જવાબ મળ્યો નથી.";
+      }
+
+      return;
+    }
+
+    const reply = data.reply.trim();
     const mood = moods[data.mood] ? data.mood : "neutral";
 
     showMessage(reply, "ai");
@@ -457,7 +476,6 @@ async function sendMessage() {
       text: reply
     });
 
-    // Save assistant reply in background.
     saveMessage("assistant", reply);
 
     updateAvatar(mood);
@@ -471,9 +489,14 @@ async function sendMessage() {
     console.error("Chat error:", error);
 
     showMessage(
-      error.message || "કનેક્શનની સમસ્યા છે. ફરી પ્રયાસ કરો.",
+      "જવાબ મેળવવામાં સમસ્યા: " +
+      (error.message || "કનેક્શનની સમસ્યા છે."),
       "ai"
     );
+
+    if (greeting) {
+      greeting.textContent = "જવાબ મેળવવામાં સમસ્યા આવી.";
+    }
 
   } finally {
     busy = false;
@@ -483,6 +506,7 @@ async function sendMessage() {
     messageInput?.focus();
   }
 }
+
 loginBtn?.addEventListener("click", async () => {
   try {
     await signInWithEmailAndPassword(
