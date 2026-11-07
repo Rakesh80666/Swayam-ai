@@ -30,7 +30,7 @@ const models = genAI
         model: name,
         generationConfig: {
           temperature: 0.8,
-          maxOutputTokens: 500
+          maxOutputTokens: 1000
         }
       })
     }))
