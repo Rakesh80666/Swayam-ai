@@ -23,7 +23,7 @@ const genAI = process.env.GEMINI_API_KEY
 
 const model = genAI
   ? genAI.getGenerativeModel({
-      model: 'gemini-3.5-flash',
+      model: 'gemini-3.8-flash',
       generationConfig: {
         responseMimeType: 'application/json',
         temperature: 0.8,
