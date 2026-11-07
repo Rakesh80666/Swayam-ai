@@ -1,6 +1,7 @@
 
 
 
+
 import express from 'express';
 import dotenv from 'dotenv';
 import { GoogleGenerativeAI } from '@google/generative-ai';
@@ -15,7 +16,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 app.use(express.json({ limit: '30kb' }));
 app.use(express.static(__dirname));
 
-// Gemini connection is created only once.
+// Gemini connection: create once when server starts.
 const genAI = process.env.GEMINI_API_KEY
   ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
   : null;
@@ -25,12 +26,67 @@ const model = genAI
       model: 'gemini-3.5-flash',
       generationConfig: {
         responseMimeType: 'application/json',
-        temperature: 0.7,
+        temperature: 0.8,
         maxOutputTokens: 500
       }
     })
   : null;
 
+// Clean and safely read Gemini response.
+function cleanResponse(raw) {
+  let text = String(raw || '').trim();
+
+  text = text
+    .replace(/^```(?:json)?\s*/i, '')
+    .replace(/\s*```$/i, '')
+    .trim();
+
+  try {
+    const parsed = JSON.parse(text);
+
+    return {
+      reply: String(parsed.reply || '').trim(),
+      mood: parsed.mood || 'neutral',
+      reaction: parsed.reaction || '🙂'
+    };
+  } catch {
+    // Try to extract reply if Gemini returned imperfect JSON.
+    const match = text.match(/"reply"\s*:\s*("(?:\\.|[^"\\])*")/);
+
+    if (match) {
+      try {
+        return {
+          reply: JSON.parse(match[1]),
+          mood: 'neutral',
+          reaction: '🙂'
+        };
+      } catch {
+        // Continue to plain text fallback.
+      }
+    }
+  }
+
+  // Do not show JSON structure or code fences to the user.
+  if (
+    text.startsWith('{') ||
+    text.startsWith('```') ||
+    text.includes('"reply"')
+  ) {
+    return {
+      reply: 'માફ કરજે, તારો જવાબ બરાબર તૈયાર થઈ શક્યો નથી. ફરીથી કહેશો?',
+      mood: 'neutral',
+      reaction: '🙂'
+    };
+  }
+
+  return {
+    reply: text,
+    mood: 'neutral',
+    reaction: '🙂'
+  };
+}
+
+// Health check.
 app.get('/api/health', (_req, res) => {
   res.json({
     ok: true,
@@ -39,6 +95,7 @@ app.get('/api/health', (_req, res) => {
   });
 });
 
+// Main chat API.
 app.post('/api/chat', async (req, res) => {
   try {
     const message = String(req.body?.message || '').trim();
@@ -64,59 +121,58 @@ app.post('/api/chat', async (req, res) => {
     }
 
     const companionStyle = persona === 'female'
-      ? 'તમે એક હૂંફાળી અને સમજદાર મહિલા મિત્ર છો.'
-      : 'તમે એક હૂંફાળા અને સમજદાર પુરુષ મિત્ર છો.';
+      ? 'તમે એક હૂંફાળી, સમજદાર અને સ્વાભાવિક મહિલા મિત્ર છો.'
+      : 'તમે એક હૂંફાળા, સમજદાર અને સ્વાભાવિક પુરુષ મિત્ર છો.';
 
     const prompt = `
-તમે SWAYAM AI નામના વ્યક્તિગત AI સાથી છો.
+તમે SWAYAM AI છો. તમે વપરાશકર્તાના સામાન્ય મિત્ર છો.
 
+તમારી ઓળખ:
 ${companionStyle}
 
-નિયમો:
-- મિત્રની જેમ વાત કરો, શિક્ષકની જેમ નહીં.
-- વપરાશકર્તાની ભાષા અને બોલી પ્રમાણે જવાબ આપો.
-- ગુજરાતી હોય તો સરળ સ્વાભાવિક ગુજરાતી વાપરો.
-- વપરાશકર્તા પર હાવી ન થાઓ.
-- દુઃખમાં પહેલાં સાંભળો અને હૂંફ આપો.
-- ગુસ્સામાં શાંતિથી વાત કરો.
-- થાકમાં ટૂંકો જવાબ આપો.
-- ઉત્સાહમાં વિચારને આગળ વધારવામાં મદદ કરો.
-- એક સમયે વધુમાં વધુ એક પ્રશ્ન પૂછો.
-- મૂડ નક્કી કરતી વખતે હાલનો સંદેશ અને અગાઉની વાત ધ્યાનમાં લો.
-- ખાતરી ન હોય તો neutral મૂડ પસંદ કરો.
+વાતચીતના નિયમો:
 
-જવાબ ફક્ત આ JSON સ્વરૂપમાં આપો:
+1. સામાન્ય મિત્રની જેમ સહજ અને સ્વાભાવિક વાત કરો.
+2. શિક્ષક, ભાષણ આપનાર કે રોબોટની જેમ વાત ન કરો.
+3. વપરાશકર્તા જે ભાષામાં વાત કરે એ જ ભાષામાં જવાબ આપો.
+4. ગુજરાતી સંદેશ હોય તો ફક્ત સ્વાભાવિક ગુજરાતી વાપરો.
+5. અંગ્રેજી સૂચનાઓ, આંતરિક વિચાર, Drafting, Reasoning કે ટેક્નિકલ લખાણ ક્યારેય જવાબમાં ન આપો.
+6. JSON, કોડ અથવા માર્કડાઉન ક્યારેય replyની અંદર ન લખો.
+7. ટૂંકો, સમજદાર અને લાગણીસભર જવાબ આપો.
+8. મજાક હોય તો હળવી મજાક કરો.
+9. દુઃખ હોય તો પહેલાં સાંભળો અને હૂંફ આપો.
+10. ગુસ્સામાં શાંતિથી અને સન્માનથી વાત કરો.
+11. થાક હોય તો ટૂંકો જવાબ આપો.
+12. ઉત્સાહ હોય તો વાતને આગળ વધારો.
+13. એક સમયે વધુમાં વધુ એક પ્રશ્ન પૂછો.
+14. વપરાશકર્તા સાથે અગાઉની વાતચીતનો સંદર્ભ જાળવો.
+15. વપરાશકર્તાની વાત સમજીને જ જવાબ આપો. બનાવટી જવાબ ન આપો.
+16. પૂરતી માહિતી ન હોય તો mood neutral રાખો.
+
+મૂડ માટે ફક્ત આમાંથી એક પસંદ કરો:
+happy, sad, angry, tired, excited, neutral
+
+હવે ફક્ત માન્ય JSON આપો.
+JSONની બહાર એક પણ શબ્દ ન લખો.
+
+આ જ સ્વરૂપ રાખો:
 {
-  "reply": "તમારો જવાબ",
-  "mood": "happy અથવા sad અથવા angry અથવા tired અથવા excited અથવા neutral",
-  "reaction": "એક યોગ્ય emoji"
+  "reply": "મિત્ર તરીકેનો સ્વાભાવિક જવાબ",
+  "mood": "neutral",
+  "reaction": "🙂"
 }
 
 અગાઉની વાતચીત:
 ${JSON.stringify(history)}
 
-હાલનો સંદેશ:
+વપરાશકર્તાનો હાલનો સંદેશ:
 ${message}
 `;
 
     const result = await model.generateContent(prompt);
 
-    const raw = result.response.text()
-      .trim()
-      .replace(/^```(?:json)?\s*/i, '')
-      .replace(/\s*```$/, '');
-
-    let data;
-
-    try {
-      data = JSON.parse(raw);
-    } catch {
-      data = {
-        reply: raw,
-        mood: 'neutral',
-        reaction: '🙂'
-      };
-    }
+    const raw = result.response.text();
+    const data = cleanResponse(raw);
 
     const allowedMoods = [
       'happy',
@@ -127,8 +183,10 @@ ${message}
       'neutral'
     ];
 
+    const reply = String(data.reply || '').trim();
+
     return res.json({
-      reply: String(data.reply || 'હું સાંભળું છું.').slice(0, 4000),
+      reply: reply || 'હું સાંભળું છું. બોલ, શું વાત છે?',
       mood: allowedMoods.includes(data.mood)
         ? data.mood
         : 'neutral',
@@ -136,7 +194,7 @@ ${message}
     });
 
   } catch (err) {
-    console.error('SWAYAM AI error:', err);
+    console.error('SWAYAM AI error:', err?.message || err);
 
     return res.status(500).json({
       error: 'હમણાં જવાબ મળી શક્યો નથી. થોડી વાર પછી ફરી પ્રયાસ કરો.'
@@ -144,6 +202,7 @@ ${message}
   }
 });
 
+// Serve the app.
 app.get('*', (_req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
