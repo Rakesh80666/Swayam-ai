@@ -483,3 +483,219 @@ async function sendMessage() {
     messageInput?.focus();
   }
 }
+loginBtn?.addEventListener("click", async () => {
+  try {
+    await signInWithEmailAndPassword(
+      auth,
+      email.value.trim(),
+      password.value
+    );
+
+    if (authMsg) authMsg.textContent = "";
+
+  } catch (error) {
+    if (authMsg) {
+      authMsg.textContent =
+        "લૉગિન થઈ શક્યું નથી: " + error.message;
+    }
+  }
+});
+
+signupBtn?.addEventListener("click", async () => {
+  try {
+    await createUserWithEmailAndPassword(
+      auth,
+      email.value.trim(),
+      password.value
+    );
+
+    if (authMsg) authMsg.textContent = "";
+
+  } catch (error) {
+    if (authMsg) {
+      authMsg.textContent =
+        "એકાઉન્ટ બની શક્યું નથી: " + error.message;
+    }
+  }
+});
+
+googleBtn?.addEventListener("click", async () => {
+  try {
+    await signInWithPopup(auth, new GoogleAuthProvider());
+  } catch (error) {
+    if (authMsg) {
+      authMsg.textContent =
+        "Google Login સમસ્યા: " + error.message;
+    }
+  }
+});
+
+resetBtn?.addEventListener("click", async () => {
+  try {
+    await sendPasswordResetEmail(auth, email.value.trim());
+
+    if (authMsg) {
+      authMsg.textContent = "પાસવર્ડ રીસેટ લિંક મોકલી છે.";
+    }
+  } catch (error) {
+    if (authMsg) {
+      authMsg.textContent = "ઇમેઇલ તપાસો: " + error.message;
+    }
+  }
+});
+
+logoutBtn?.addEventListener("click", async () => {
+  try {
+    await signOut(auth);
+  } catch (error) {
+    console.error("Logout error:", error);
+  }
+});
+
+sendBtn?.addEventListener("click", sendMessage);
+
+messageInput?.addEventListener("keydown", (event) => {
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault();
+    sendMessage();
+  }
+});
+
+clearBtn?.addEventListener("click", async () => {
+  if (!currentUser) return;
+
+  if (!confirm("તમારી જૂની વાતચીત કાઢી નાખવી છે?")) return;
+
+  try {
+    const snapshot = await getDocs(chatCollection());
+    const batch = writeBatch(db);
+
+    snapshot.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+
+    await batch.commit();
+
+    chatHistory = [];
+
+    if (messages) messages.innerHTML = "";
+
+    updateAvatar("neutral");
+
+  } catch (error) {
+    alert("Chat History કાઢી શકાઈ નથી. Firebase Rules તપાસો.");
+    console.error(error);
+  }
+});
+
+const SpeechRecognition =
+  window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if (micBtn && SpeechRecognition) {
+  const recognition = new SpeechRecognition();
+
+  recognition.continuous = false;
+  recognition.interimResults = false;
+
+  micBtn.addEventListener("click", () => {
+    try {
+      if (selectedLanguage === "gu-IN") {
+        recognition.lang = "gu-IN";
+      } else if (selectedLanguage === "hi-IN") {
+        recognition.lang = "hi-IN";
+      } else {
+        const deviceLanguage =
+          (navigator.language || "gu-IN").toLowerCase();
+
+        recognition.lang =
+          deviceLanguage.startsWith("hi")
+            ? "hi-IN"
+            : "gu-IN";
+
+        if ($("languageInfo")) {
+          $("languageInfo").textContent =
+            "માઇક માટે ફોનની ભાષા મુજબ પ્રયાસ થશે. જરૂર પડે તો ગુજરાતી અથવા હિન્દી પસંદ કરો.";
+        }
+      }
+
+      recognition.start();
+
+      if (authMsg) {
+        authMsg.textContent = "હું સાંભળું છું...";
+      }
+
+    } catch (error) {
+      console.log(error);
+
+      if (authMsg) {
+        authMsg.textContent =
+          "માઇક્રોફોન ફરી શરૂ કરવા થોડી વાર રાહ જુઓ.";
+      }
+    }
+  });
+
+  recognition.onresult = (event) => {
+    const spokenText = event.results[0][0].transcript;
+
+    if (messageInput) {
+      messageInput.value = spokenText;
+    }
+
+    if (authMsg) authMsg.textContent = "તમારી વાત લખાઈ ગઈ છે.";
+  };
+
+  recognition.onerror = () => {
+    if (authMsg) {
+      authMsg.textContent =
+        "માઇક્રોફોન ચાલુ ન થયો. Permission અને ભાષા તપાસો.";
+    }
+  };
+
+  recognition.onend = () => {
+    if (authMsg && authMsg.textContent === "હું સાંભળું છું...") {
+      authMsg.textContent = "";
+    }
+  };
+
+} else if (micBtn) {
+  micBtn.addEventListener("click", () => {
+    alert("આ બ્રાઉઝરમાં Voice Input ઉપલબ્ધ નથી.");
+  });
+}
+
+onAuthStateChanged(auth, async (user) => {
+  currentUser = user;
+
+  const authPanel = $("authPanel");
+
+  if (user) {
+    if (authPanel) authPanel.style.display = "none";
+
+    if (chatPanel) {
+      chatPanel.classList.remove("hidden");
+      chatPanel.style.display = "block";
+    }
+
+    addPersonaSelector();
+
+    if (greeting) {
+      greeting.textContent =
+        "નમસ્તે! SWAYAM AIમાં તમારું સ્વાગત છે.";
+    }
+
+    await loadMessages();
+    updateAvatar("neutral");
+
+  } else {
+    if (authPanel) authPanel.style.display = "";
+
+    if (chatPanel) {
+      chatPanel.classList.add("hidden");
+      chatPanel.style.display = "";
+    }
+
+    chatHistory = [];
+
+    if (messages) messages.innerHTML = "";
+  }
+});
