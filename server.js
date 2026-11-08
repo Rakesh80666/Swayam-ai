@@ -173,14 +173,16 @@ function cleanResponse(raw) {
 
 // Health check
 app.get('/api/health', (_req, res) => {
-  res.json({
+  console.log('HEALTH CHECK REQUEST RECEIVED');
+
+  res.status(200).json({
     ok: true,
     app: 'SWAYAM AI',
-    aiConfigured: Boolean(genAI),
-    models: modelNames
+    server: 'running',
+    time: new Date().toISOString(),
+    aiConfigured: Boolean(genAI)
   });
 });
-
 // Main chat API
 app.post('/api/chat', async (req, res) => {
   try {
