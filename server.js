@@ -68,9 +68,7 @@ async function generateWithFallback(prompt) {
           err?.message || err
         );
 
-        const temporaryError = [
-          429, 500, 502, 503, 504
-        ].includes(status);
+       const temporaryError = status === 0 || [429, 500, 502, 503, 504].includes(status); 
 
         if (!temporaryError) {
           throw err;
