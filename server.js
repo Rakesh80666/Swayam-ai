@@ -148,8 +148,8 @@ Help people become confident and independent.
 Never pretend to be a human.
 `;
 
-app.get('/health', (req, res) => {
-  res.json({
+app.get('/api/health', (req, res) => {
+  res.status(200).json({
     status: 'ok',
     firebaseConfigured: Boolean(firebaseAuth),
     geminiConfigured: Boolean(genAI)
