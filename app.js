@@ -536,7 +536,7 @@ async function sendMessage() {
     text
   });
 
-  saveMessage("user", text);
+  await saveMessage("user", text);
 
   if (greeting) {
     greeting.textContent = "હું તમને સાંભળું છું...";
@@ -610,7 +610,7 @@ const response = await fetch("/api/chat", {
       text: reply
     });
 
-    saveMessage("assistant", reply);
+    await saveMessage("assistant", reply);
 
     updateAvatar(mood);
     speak(reply);
