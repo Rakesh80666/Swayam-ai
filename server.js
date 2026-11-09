@@ -47,9 +47,7 @@ const genAI = process.env.GEMINI_API_KEY
   : null;
 
 const modelNames = [
-
-
-  'gemini-3.5-flash'
+'gemini-3.5-flash'
 ];
 
 function requireFirebaseAuth(req, res, next) {
