@@ -1,6 +1,5 @@
 
 
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 
 import {
@@ -151,9 +150,7 @@ function addPersonaSelector() {
     <p id="languageInfo" style="font-size:12px;margin:6px 0;">
       લખાણની ભાષા ઓળખવાનો પ્રયાસ થશે.
     </p>
-
-    
-  
+  `;
 
   chatPanel?.prepend(selector);
 
@@ -184,8 +181,6 @@ function addPersonaSelector() {
       if ("speechSynthesis" in window) {
         speechSynthesis.cancel();
       }
-
-      updateVoiceInfo();
     });
   }
 
@@ -213,8 +208,6 @@ function addPersonaSelector() {
       }
     });
   }
-
-  
 }
 
 // મૂડ અને અવતાર
@@ -333,77 +326,7 @@ function loadAvailableVoices() {
   return availableVoices;
 }
 
-function 
-  // Voice 1 અને Voice 2નું સેટિંગ હાલ બંધ રાખ્યું છે.
-}
-
-  if (!("speechSynthesis" in window)) {
-    if (info) {
-      info.textContent = "આ બ્રાઉઝરમાં Speech Synthesis ઉપલબ્ધ નથી.";
-    }
-    return;
-  }
-
-  const voices = loadAvailableVoices();
-
-  if (!voices.length) {
-    if (info) {
-      info.textContent =
-        "બ્રાઉઝર હજી અવાજ લોડ કરી રહ્યું છે. થોડી વાર રાહ જુઓ.";
-    }
-    return;
-  }
-
-  const gujaratiVoices = voices.filter((voice) =>
-    voice.lang.toLowerCase().startsWith("gu")
-  );
-
-  const voice1 = gujaratiVoices.find((voice) =>
-    /voice[\s_-]*1\b|gujarati.*1\b|1.*gujarati/i.test(
-      voice.name + " " + voice.voiceURI
-    )
-  );
-
-  const voice2 = gujaratiVoices.find((voice) =>
-    /voice[\s_-]*2\b|gujarati.*2\b|2.*gujarati/i.test(
-      voice.name + " " + voice.voiceURI
-    )
-  );
-
-  let result = "બ્રાઉઝરમાં Gujarati અવાજ: ";
-
-  if (voice1) {
-    result += "Voice 1 મળ્યો";
-  } else {
-    result += "Voice 1 નામથી ઓળખાયો નથી";
-  }
-
-  result += " | ";
-
-  if (voice2) {
-    result += "Voice 2 મળ્યો";
-  } else {
-    result += "Voice 2 નામથી ઓળખાયો નથી";
-  }
-
-  if (!gujaratiVoices.length) {
-    result += " | Gujarati અવાજ બ્રાઉઝરમાં મળ્યો નથી.";
-  } else {
-    result += " | ઉપલબ્ધ: " +
-      gujaratiVoices.map((voice) =>
-        `${voice.name} (${voice.lang})`
-      ).join(", ");
-  }
-
-  if (info) info.textContent = result;
-
-  console.log("SWAYAM AI AVAILABLE VOICES:", voices);
-  console.log("SWAYAM AI GUJARATI VOICES:", gujaratiVoices);
-  console.log("VOICE COUNT:", gujaratiVoices.length);
-console.log("VOICE DETAILS:", gujaratiVoices.map(v => ({name:v.name, lang:v.lang, uri:v.voiceURI})));
-}
-
-// પસંદ કરેલી ભાષા અને સાથી પ્રમાણે અવાજ પસંદ કરો
+// પસંદ કરેલી ભાષા પ્રમાણે અવાજ પસંદ કરો
 function getPreferredVoice(languageCode = "gu-IN") {
   const voices = loadAvailableVoices();
 
@@ -419,11 +342,12 @@ function getPreferredVoice(languageCode = "gu-IN") {
 
   if (!matchingVoices.length) return null;
 
-  
-function 
-  // Voice 1 અને Voice 2નું સેટિંગ હાલ બંધ રાખ્યું છે.
-}
-  // Hindi / English માટે નામ પરથી gender ઓળખવાનો પ્રયાસ
+  // ગુજરાતી માટે ઉપલબ્ધ પ્રથમ ગુજરાતી અવાજ
+  if (languagePrefix === "gu") {
+    return matchingVoices[0];
+  }
+
+  // હિન્દી / અંગ્રેજી માટે નામ પરથી gender ઓળખવાનો પ્રયાસ
   const femaleNames =
     /female|woman|zira|heera|veena|kalpana|lekha|priya|aditi/i;
 
@@ -438,7 +362,6 @@ function
     pattern.test(voice.name + " " + voice.voiceURI)
   );
 
-  // નામથી gender ન ઓળખાય તો ભાષાનો પ્રથમ ઉપલબ્ધ અવાજ
   return genderVoice || matchingVoices[0];
 }
 
@@ -485,7 +408,6 @@ if ("speechSynthesis" in window) {
 
   speechSynthesis.onvoiceschanged = () => {
     loadAvailableVoices();
-    
   };
 }
 
@@ -532,21 +454,21 @@ async function sendMessage() {
   try {
     const language = detectTextLanguage(text);
 
-   const idToken = await currentUser.getIdToken();
+    const idToken = await currentUser.getIdToken();
 
-const response = await fetch("/api/chat", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${idToken}`
-  },
-  body: JSON.stringify({
-    message: text,
-    history: chatHistory.slice(0, -1).slice(-8),
-    persona,
-    language
-  })
-}); 
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${idToken}`
+      },
+      body: JSON.stringify({
+        message: text,
+        history: chatHistory.slice(0, -1).slice(-8),
+        persona,
+        language
+      })
+    });
 
     const responseText = await response.text();
 
@@ -842,7 +764,6 @@ onAuthStateChanged(auth, async (user) => {
 
     await loadMessages();
     updateAvatar("neutral");
-    updateVoiceInfo();
 
   } else {
     if (authPanel) authPanel.style.display = "";
