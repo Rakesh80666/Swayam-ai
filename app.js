@@ -333,9 +333,9 @@ function loadAvailableVoices() {
   return availableVoices;
 }
 
-// Gujarati Voice 1 અને Voice 2ની તપાસ
 function updateVoiceInfo() {
-  const info = $("voiceInfo");
+  // Voice 1 અને Voice 2નું સેટિંગ હાલ બંધ રાખ્યું છે.
+}
 
   if (!("speechSynthesis" in window)) {
     if (info) {
