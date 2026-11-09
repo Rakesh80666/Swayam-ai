@@ -152,11 +152,8 @@ function addPersonaSelector() {
       લખાણની ભાષા ઓળખવાનો પ્રયાસ થશે.
     </p>
 
-    <p id="voiceInfo"
-       style="font-size:12px;margin:6px 0;word-break:break-word;">
-      ફોનના અવાજ તપાસી રહ્યા છીએ...
-    </p>
-  `;
+    
+  
 
   chatPanel?.prepend(selector);
 
