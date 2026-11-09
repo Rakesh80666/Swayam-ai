@@ -545,18 +545,21 @@ async function sendMessage() {
   try {
     const language = detectTextLanguage(text);
 
-    const response = await fetch("/api/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        message: text,
-        history: chatHistory.slice(-8),
-        persona,
-        language
-      })
-    });
+   const idToken = await currentUser.getIdToken();
+
+const response = await fetch("/api/chat", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${idToken}`
+  },
+  body: JSON.stringify({
+    message: text,
+    history: chatHistory.slice(0, -1).slice(-8),
+    persona,
+    language
+  })
+}); 
 
     const responseText = await response.text();
 
