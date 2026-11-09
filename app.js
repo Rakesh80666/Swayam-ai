@@ -214,7 +214,7 @@ function addPersonaSelector() {
     });
   }
 
-  updateVoiceInfo();
+  
 }
 
 // મૂડ અને અવતાર
@@ -333,7 +333,7 @@ function loadAvailableVoices() {
   return availableVoices;
 }
 
-function updateVoiceInfo() {
+function 
   // Voice 1 અને Voice 2નું સેટિંગ હાલ બંધ રાખ્યું છે.
 }
 
@@ -419,20 +419,10 @@ function getPreferredVoice(languageCode = "gu-IN") {
 
   if (!matchingVoices.length) return null;
 
-  // Gujarati માટે ખાસ Voice 1 / Voice 2
-  if (languagePrefix === "gu") {
-    const voiceNumber = persona === "male" ? 2 : 1;
-
-    const exactVoice = matchingVoices.find((voice) =>
-      new RegExp(
-        `voice[\\s_-]*${voiceNumber}\\b|gujarati.*${voiceNumber}\\b|${voiceNumber}.*gujarati`,
-        "i"
-      ).test(voice.name + " " + voice.voiceURI)
-    );
-
-    if (exactVoice) return exactVoice;
-  }
-
+  
+function 
+  // Voice 1 અને Voice 2નું સેટિંગ હાલ બંધ રાખ્યું છે.
+}
   // Hindi / English માટે નામ પરથી gender ઓળખવાનો પ્રયાસ
   const femaleNames =
     /female|woman|zira|heera|veena|kalpana|lekha|priya|aditi/i;
@@ -495,7 +485,7 @@ if ("speechSynthesis" in window) {
 
   speechSynthesis.onvoiceschanged = () => {
     loadAvailableVoices();
-    updateVoiceInfo();
+    
   };
 }
 
