@@ -1,5 +1,4 @@
 
-
 import express from 'express';
 import dotenv from 'dotenv';
 import { GoogleGenerativeAI } from '@google/generative-ai';
@@ -108,6 +107,96 @@ function detectMood(message) {
   return 'calm';
 }
 
+/* NEW FEATURE: SMART INTENT DETECTION */
+
+function detectIntent(message) {
+  const text = message.toLowerCase();
+
+  if (
+    /સરકારી યોજના|સરકારની યોજના|સરકારી લાભ|પેન્શન|રેશન કાર્ડ|સબસિડી|yojana|sarkari|pension|ration card|subsidy/.test(text)
+  ) {
+    return 'government';
+  }
+
+  if (
+    /અરજી|પત્ર લખ|લખી આપ|ક્વોટેશન|બાયોડેટા|ઇમેઇલ|application|arji|quotation|resume|email|patra|lakhi aap/.test(text)
+  ) {
+    return 'writing';
+  }
+
+  if (
+    /નજીક|મારી પાસે|ક્યાં છે|હોસ્પિટલ|દવાખાનું|બેંક|એટીએમ|near me|nearby|location|najik|kyan chhe/.test(text)
+  ) {
+    return 'local_info';
+  }
+
+  if (
+    /મોબાઇલ|મોબાઈલ|ફોન|સેટિંગ|ઇન્સ્ટોલ|પાસવર્ડ|ઇન્ટરનેટ|વાઇફાઇ|mobile|phone|setting|install|password|wifi/.test(text)
+  ) {
+    return 'mobile_help';
+  }
+
+  if (
+    /શીખવું|શીખવ|સમજાવો|સમજાતું નથી|અભ્યાસ|learn|learning|sikhvu|sikhvado|samjavo/.test(text)
+  ) {
+    return 'learning';
+  }
+
+  return 'general';
+}
+
+function getIntentInstruction(intent) {
+  switch (intent) {
+    case 'government':
+      return `
+The user needs help with a government scheme or government benefit.
+Explain the topic in simple Gujarati.
+Do not invent eligibility rules, documents, deadlines or benefits.
+Clearly mention when current official verification is needed.
+Ask for the user's state or city only if it is necessary.
+`;
+
+    case 'writing':
+      return `
+The user needs help creating written content.
+Prepare the requested application, letter, quotation, email or other text.
+Use a clean ready-to-copy format.
+Ask only for essential missing details.
+`;
+
+    case 'local_info':
+      return `
+The user needs information about a nearby place or local service.
+Ask for their area or city if it is missing.
+Do not invent addresses, opening hours or live availability.
+Be honest if live location search is not available.
+`;
+
+    case 'mobile_help':
+      return `
+The user needs help with a mobile phone, app or settings.
+Give simple mobile-friendly instructions, one step at a time.
+Never ask for passwords, OTPs or private security codes.
+`;
+
+    case 'learning':
+      return `
+The user wants to learn or understand something.
+Explain in simple everyday Gujarati with a practical example.
+Teach step by step without overwhelming the user.
+`;
+
+    default:
+      return `
+The user may simply want a normal conversation.
+Respond naturally according to the user's actual message.
+Do not force a service or category into ordinary conversation.
+`;
+  }
+}
+
+/* END OF SMART INTENT DETECTION */
+
 function makeHistory(history) {
   if (!Array.isArray(history)) return [];
 
@@ -130,7 +219,6 @@ function makeHistory(history) {
     };
   }).filter(item => item.parts[0].text);
 }
-
 
 const systemInstruction = `
 You are SWAYAM AI, a warm, caring, romantic and respectful AI companion.
@@ -161,14 +249,12 @@ CONVERSATION STYLE:
 - If the user needs practical help, become focused and useful.
 - Never force romance into serious or practical conversations.
 
-LANGUAGE
+LANGUAGE:
 - Always identify the language used by the user.
 - If the user writes in Gujarati script or Roman Gujarati, ALWAYS reply in natural Gujarati.
 - Reply in Gujarati script by default, even when the user writes Roman Gujarati.
 - Never mix Hindi, Urdu or Punjabi words into Gujarati sentences.
 - Use everyday Gujarati words that people naturally speak.
-- Prefer Gujarati words such as "નજીકતા", "લાગણી", "અનુભવ", "હૂંફ" and "અહેસાસ" only when they sound natural.
-- Avoid Hindi expressions such as "अच्छा", "नज़दीकी" and "कैसा".
 - Keep romantic conversations sweet, playful, gentle and natural.
 - Do not use overly poetic, dramatic or artificial language.
 - Change language only when the user explicitly requests another language.
@@ -191,9 +277,9 @@ RESPONSE QUALITY:
 - Never produce meaningless repeated characters.
 - Avoid generic, repetitive or robotic replies.
 - Do not overwhelm the user with too many steps.
+- Keep romantic replies short and natural, usually 1 to 3 sentences.
+- Avoid repeating romantic compliments or using dramatic expressions in every reply.
 `;
-
-
 
 app.get('/api/health', (req, res) => {
   res.status(200).json({
@@ -222,6 +308,10 @@ app.post('/api/chat', requireFirebaseAuth, async (req, res) => {
     const history = makeHistory(req.body.history);
     const mood = detectMood(message);
 
+    // NEW: Identify what the user wants
+    const intent = detectIntent(message);
+    const intentInstruction = getIntentInstruction(intent);
+
     const contents = [
       ...history,
       {
@@ -236,7 +326,7 @@ app.post('/api/chat', requireFirebaseAuth, async (req, res) => {
       try {
         const model = genAI.getGenerativeModel({
           model: modelName,
-          systemInstruction,
+          systemInstruction: `${systemInstruction}\n\n${intentInstruction}`,
           generationConfig: {
             temperature: 0.8,
             topP: 0.9,
@@ -257,6 +347,7 @@ app.post('/api/chat', requireFirebaseAuth, async (req, res) => {
         return res.json({
           reply: reply.trim(),
           mood,
+          intent,
           model: modelName
         });
 
@@ -300,6 +391,7 @@ app.post('/api/chat', requireFirebaseAuth, async (req, res) => {
 app.listen(PORT, () => {
   console.log(`SWAYAM AI server running on port ${PORT}`);
 });
+
 
 
 
