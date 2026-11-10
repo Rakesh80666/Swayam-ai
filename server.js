@@ -85,6 +85,8 @@ function cleanText(value, maxLength = 4000) {
   return value.trim().slice(0, maxLength);
 }
 
+/* MOOD DETECTION */
+
 function detectMood(message) {
   const text = message.toLowerCase();
 
@@ -113,7 +115,7 @@ function detectIntent(message, history = []) {
   const text = message.toLowerCase();
 
   if (
-    /સરકારી યોજના|સરકારની યોજના|સરકારી લાભ|પેન્શન|વૃદ્ધ પેન્શન|રેશન કાર્ડ|સબસિડી|yojana|yojna|sarkari|pension|vruddh|old age pension|ration card|subsidy/.test(text)
+    /સરકારી યોજના|સરકારની યોજના|સરકારી લાભ|યોજનાઓ|યોજના|પેન્શન|વૃદ્ધ પેન્શન|મહિલા|વિધવા સહાય|બાળકો માટે|બાળક યોજના|શિષ્યવૃત્તિ|રોજગાર|નોકરી|સ્ટાર્ટઅપ|ધંધા માટે લોન|વ્યવસાય લોન|સબસિડી|yojana|yojna|sarkari|pension|vruddh|old age pension|mahila|rojgar|startup|subsidy|scholarship|business loan/.test(text)
   ) {
     return 'government';
   }
@@ -142,11 +144,8 @@ function detectIntent(message, history = []) {
     return 'learning';
   }
 
-  // Continue the recent government-scheme conversation
-  // when the user replies with short answers like age or income.
-
   const recentHistory = Array.isArray(history)
-    ? history.slice(-6)
+    ? history.slice(-8)
     : [];
 
   const recentGovernmentContext = recentHistory.some(item => {
@@ -159,7 +158,7 @@ function detectIntent(message, history = []) {
       2000
     ).toLowerCase();
 
-    return /સરકારી યોજના|સરકારની યોજના|પેન્શન|વૃદ્ધ પેન્શન|yojana|yojna|sarkari|pension|vruddh|old age pension/.test(oldText);
+    return /સરકારી યોજના|સરકારની યોજના|પેન્શન|વૃદ્ધ પેન્શન|યોજના|મહિલા|રોજગાર|સ્ટાર્ટઅપ|yojana|yojna|sarkari|pension|vruddh|startup|scholarship/.test(oldText);
   });
 
   if (recentGovernmentContext) {
@@ -169,87 +168,138 @@ function detectIntent(message, history = []) {
   return 'general';
 }
 
+/* DECIDE WHEN LIVE SEARCH IS NEEDED */
+
+function shouldUseGovernmentSearch(message, history = []) {
+  const text = message.toLowerCase();
+
+  const userMessages = Array.isArray(history)
+    ? history.filter(item => item.role === 'user')
+    : [];
+
+  const explicitInformationRequest =
+    /પાત્રતા|લાયકાત|આવક મર્યાદા|કેટલી રકમ|કેટલો લાભ|દસ્તાવેજ|અરજી કેવી|ક્યાં અરજી|યોજનાઓની યાદી|કઈ કઈ યોજના|કઈ યોજના|સત્તાવાર માહિતી|નિયમો|હાલમાં|latest|eligibility|documents|apply|benefit|income limit|how to apply|scheme list/.test(text);
+
+  const categorySearch =
+    /મહિલા.*યોજના|બાળકો.*યોજના|યુવાનો.*યોજના|રોજગાર.*યોજના|સ્ટાર્ટઅપ.*યોજના|ધંધા.*લોન|મહિલા.*લોન|યોજનાઓની યાદી|scholarship|startup scheme|employment scheme/.test(text);
+
+  // Search after initial personal details have been collected.
+  const enoughConversation =
+    userMessages.length >= 4;
+
+  return explicitInformationRequest ||
+    categorySearch ||
+    enoughConversation;
+}
+
+/* GOVERNMENT GUIDANCE */
+
 function getIntentInstruction(intent) {
   switch (intent) {
     case 'government':
       return `
-GOVERNMENT SCHEME GUIDANCE:
+SWAYAM AI GOVERNMENT SCHEME AND OPPORTUNITY GUIDE
 
-You are helping the user understand Indian government schemes,
-especially Gujarat government schemes.
+Your job is to help ordinary people understand government
+schemes and practical opportunities in India.
 
-IMPORTANT RULES:
+COVER THESE FIVE AREAS:
 
-1. Speak in simple, natural Gujarati when the user uses Gujarati
-   or Roman Gujarati.
+1. OLDER PEOPLE AND DISABILITY:
+   Old-age pension, widow assistance, disability assistance
+   and social security schemes.
 
-2. First understand which scheme the user wants information about.
+2. WOMEN:
+   Women's welfare, widow assistance, maternity benefits,
+   education, self-help groups, business support and loans.
 
-3. If the user asks about old-age pension or વૃદ્ધ પેન્શન,
-   explain that different schemes may exist.
-   Do not mix their eligibility rules or payment amounts.
+3. CHILDREN AND STUDENTS:
+   Scholarships, education assistance, girl child schemes,
+   child welfare and child protection.
 
-4. Ask only ONE question at a time.
-   Never show a long questionnaire.
+4. YOUTH AND EMPLOYMENT:
+   Job opportunities, skill training, apprenticeships,
+   employment assistance and self-employment.
 
-5. For an old-age pension eligibility check, collect relevant
-   information gradually. Possible questions include:
-   - Age of the applicant.
-   - State and district of residence.
-   - Rural or urban residence.
-   - Annual family income.
-   - BPL status, if relevant.
-   - Whether the applicant has a son aged 21 or above,
-     if this is relevant to the specific scheme.
-   - Duration of residence in Gujarat, if relevant.
-   - Disability status, only if relevant.
+5. BUSINESS AND STARTUPS:
+   Small business loans, MSME support, startup assistance,
+   subsidies, training and entrepreneurship schemes.
 
-6. Do not ask all these questions automatically.
-   Ask only the next useful question based on previous answers.
+GEOGRAPHIC PRIORITY:
+- First consider schemes applicable in Gujarat when the
+  user lives in Gujarat.
+- Also consider relevant Central Government schemes.
+- Consider other state schemes only when appropriate.
 
-7. Remember answers already given in the conversation.
-   Do not ask the same question again unnecessarily.
+LANGUAGE:
+- Speak simple natural Gujarati for Gujarati or Roman Gujarati.
+- Use everyday words and explain difficult official terms.
+- Never overwhelm the user.
 
-8. Once enough information is available, explain:
-   - Which scheme may apply.
-   - Which eligibility conditions appear satisfied.
-   - Which conditions still need verification.
-   - Documents that may be required.
-   - Where and how to apply.
-   - Which official office or portal can help.
+ONE QUESTION AT A TIME:
+- Understand the user's actual need.
+- Ask only one useful question at a time.
+- Remember answers already given in the conversation.
+- Never repeat a question unnecessarily.
+- Do not ask for personal information that is not relevant.
 
-9. Never guarantee that the user will receive a pension.
-   Only the relevant government authority can confirm final eligibility.
+UNDERSTAND THE NEED:
+Identify whether the user needs:
+- Pension or social assistance.
+- Women's welfare.
+- Children's education or welfare.
+- A job or skill training.
+- A business loan or startup assistance.
 
-10. NEVER invent:
-    - Eligibility conditions.
-    - Age limits.
-    - Income limits.
-    - Pension amounts.
-    - Required documents.
-    - Application deadlines.
-    - Government website links.
+ELIGIBILITY:
+When enough information is available:
+- Identify possible relevant schemes.
+- Explain why each scheme may apply.
+- Separate conditions that appear satisfied,
+  conditions that are not satisfied and conditions
+  that still need official verification.
+- Explain age, income, residence, category or other
+  eligibility only when supported by reliable sources.
 
-11. Government rules and amounts can change.
-    Clearly tell the user when information needs confirmation
-    from an official government source.
+DOCUMENTS:
+Explain likely required documents in a numbered list.
+Distinguish common documents from scheme-specific documents.
+Tell the user to confirm the final list with the authority.
 
-12. Never claim that you checked a live government website
-    unless an actual official-source check was performed.
+APPLICATION:
+Explain where and how to apply step by step.
+Mention the relevant official portal or government office
+when verified information is available.
+Explain what receipt or acknowledgement to keep.
+Never claim that an application has been submitted.
 
-13. If exact current information is not available,
-    say so honestly and guide the user to the appropriate
-    government office or official portal.
+LIVE SEARCH AND SOURCE RULES:
+When Google Search grounding is available:
+- Search for current information relevant to the user's question.
+- Give priority to official government websites.
+- Prefer domains such as gov.in, nic.in and official
+  Gujarat government websites.
+- Use official scheme pages, department pages and
+  government notifications whenever possible.
+- Check that the source actually supports the claim.
+- If an official source cannot be found, say so clearly.
+- Do not present unofficial information as official.
+- Do not invent source links or pretend a page was checked.
 
-14. Keep the conversation friendly and practical.
-    Do not overwhelm the user with too much information.
+ACCURACY:
+Never invent scheme names, age limits, income limits,
+benefit amounts, deadlines, required documents or rules.
+Do not mix the rules of two different schemes.
+Never guarantee that a person will receive a benefit.
+Final eligibility is decided by the relevant authority.
+Government rules can change; explain when confirmation
+is necessary.
 
 FIRST QUESTION FOR OLD-AGE PENSION:
-If the user has only asked about an old-age pension scheme
-and has not given their age, ask:
+If age is not known, ask:
 "સૌ પ્રથમ તમારી ઉંમર કેટલી છે?"
 
-Continue one question at a time after that.
+Continue gradually, one question at a time.
 `;
 
     case 'writing':
@@ -292,7 +342,7 @@ Do not force a service or category into ordinary conversation.
   }
 }
 
-/* END OF SMART INTENT DETECTION */
+/* CONVERSATION HISTORY */
 
 function makeHistory(history) {
   if (!Array.isArray(history)) return [];
@@ -316,6 +366,8 @@ function makeHistory(history) {
     };
   }).filter(item => item.parts[0].text);
 }
+
+/* MAIN PERSONALITY */
 
 const systemInstruction = `
 You are SWAYAM AI, a warm, caring, romantic and respectful AI companion.
@@ -352,8 +404,6 @@ LANGUAGE:
 - Reply in Gujarati script by default, even when the user writes Roman Gujarati.
 - Never mix Hindi, Urdu or Punjabi words into Gujarati sentences.
 - Use everyday Gujarati words that people naturally speak.
-- Keep romantic conversations sweet, playful, gentle and natural.
-- Do not use overly poetic, dramatic or artificial language.
 - Change language only when the user explicitly requests another language.
 
 ROMANTIC BOUNDARIES:
@@ -370,21 +420,146 @@ AI should support human thinking, not dominate it.
 
 RESPONSE QUALITY:
 - Keep replies natural, relevant and concise.
-- Avoid repeating letters, words or phrases unnecessarily.
-- Never produce meaningless repeated characters.
+- Avoid repeating words or phrases unnecessarily.
 - Avoid generic, repetitive or robotic replies.
 - Do not overwhelm the user with too many steps.
-- Keep romantic replies short and natural, usually 1 to 3 sentences.
-- Avoid repeating romantic compliments or using dramatic expressions in every reply.
+- Keep romantic replies short and natural.
+- Never force romantic expressions into practical guidance.
 `;
+
+/* GOOGLE SEARCH GROUNDING */
+
+async function generateGovernmentAnswer(
+  modelName,
+  contents,
+  fullInstruction
+) {
+  const endpoint =
+    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(modelName)}:generateContent`;
+
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-goog-api-key': process.env.GEMINI_API_KEY
+    },
+    body: JSON.stringify({
+      systemInstruction: {
+        parts: [{ text: fullInstruction }]
+      },
+      contents,
+      tools: [
+        {
+          google_search: {}
+        }
+      ],
+      generationConfig: {
+        temperature: 0.4,
+        topP: 0.9,
+        maxOutputTokens: 1400
+      }
+    })
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data.error?.message || `Google Search request failed: ${response.status}`
+    );
+  }
+
+  const candidate = data.candidates?.[0];
+
+  const reply = (candidate?.content?.parts || [])
+    .map(part => part.text || '')
+    .join('')
+    .trim();
+
+  if (!reply) {
+    throw new Error('Empty grounded response');
+  }
+
+  const chunks =
+    candidate?.groundingMetadata?.groundingChunks || [];
+
+  const sources = [];
+  const seenUrls = new Set();
+
+  for (const chunk of chunks) {
+    const web = chunk.web;
+
+    if (!web?.uri || seenUrls.has(web.uri)) continue;
+
+    seenUrls.add(web.uri);
+
+    let official = false;
+
+    try {
+      const hostname = new URL(web.uri).hostname.toLowerCase();
+
+      official =
+        hostname.endsWith('.gov.in') ||
+        hostname === 'gov.in' ||
+        hostname.endsWith('.nic.in') ||
+        hostname === 'nic.in';
+    } catch {
+      official = false;
+    }
+
+    sources.push({
+      title: cleanText(web.title || 'માહિતીનો સ્રોત', 200),
+      url: web.uri,
+      official
+    });
+  }
+
+  const officialSources =
+    sources.filter(source => source.official);
+
+  let finalReply = reply;
+
+  if (officialSources.length > 0) {
+    finalReply += '\n\nસત્તાવાર સરકારી સ્રોતો:\n';
+
+    officialSources.slice(0, 5).forEach((source, index) => {
+      finalReply += `${index + 1}. ${source.title}\n${source.url}\n`;
+    });
+  } else {
+    finalReply +=
+      '\n\nનોંધ: આ જવાબ માટે ચકાસી શકાય એવો સત્તાવાર સરકારી સ્રોત મળ્યો નથી. અરજી કરતા પહેલાં સંબંધિત સરકારી કચેરીમાં માહિતીની પુષ્ટિ કરશો.';
+  }
+
+  const otherSources =
+    sources.filter(source => !source.official);
+
+  if (otherSources.length > 0) {
+    finalReply += '\nઅન્ય સંદર્ભો (સત્તાવાર પુષ્ટિ જરૂરી):\n';
+
+    otherSources.slice(0, 3).forEach((source, index) => {
+      finalReply += `${index + 1}. ${source.title}\n${source.url}\n`;
+    });
+  }
+
+  return {
+    reply: finalReply,
+    sources,
+    searchUsed: true
+  };
+}
+
+/* HEALTH CHECK */
 
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     status: 'ok',
     firebaseConfigured: Boolean(firebaseAuth),
-    geminiConfigured: Boolean(genAI)
+    geminiConfigured: Boolean(genAI),
+    governmentSearch: Boolean(process.env.GEMINI_API_KEY)
   });
 });
+
+/* CHAT API */
 
 app.post('/api/chat', requireFirebaseAuth, async (req, res) => {
   try {
@@ -405,9 +580,11 @@ app.post('/api/chat', requireFirebaseAuth, async (req, res) => {
     const history = makeHistory(req.body.history);
     const mood = detectMood(message);
 
-    // Identify the user's current intent.
     const intent = detectIntent(message, req.body.history);
     const intentInstruction = getIntentInstruction(intent);
+
+    const fullInstruction =
+      `${systemInstruction}\n\n${intentInstruction}`;
 
     const contents = [
       ...history,
@@ -421,13 +598,47 @@ app.post('/api/chat', requireFirebaseAuth, async (req, res) => {
 
     for (const modelName of modelNames) {
       try {
+        // Government information search is used only
+        // when the conversation needs current scheme information.
+        if (
+          intent === 'government' &&
+          shouldUseGovernmentSearch(message, req.body.history)
+        ) {
+          try {
+            const grounded = await generateGovernmentAnswer(
+              modelName,
+              contents,
+              fullInstruction
+            );
+
+            return res.json({
+              reply: grounded.reply,
+              mood,
+              intent,
+              model: modelName,
+              searchUsed: true,
+              sources: grounded.sources
+            });
+
+          } catch (searchError) {
+            console.error(
+              'Government search error:',
+              searchError.message
+            );
+
+            // Continue with ordinary Gemini response.
+            // The instruction still prevents false claims
+            // about live verification.
+          }
+        }
+
         const model = genAI.getGenerativeModel({
           model: modelName,
-          systemInstruction: `${systemInstruction}\n\n${intentInstruction}`,
+          systemInstruction: fullInstruction,
           generationConfig: {
             temperature: 0.8,
             topP: 0.9,
-            maxOutputTokens: 700
+            maxOutputTokens: 900
           }
         });
 
@@ -445,7 +656,9 @@ app.post('/api/chat', requireFirebaseAuth, async (req, res) => {
           reply: reply.trim(),
           mood,
           intent,
-          model: modelName
+          model: modelName,
+          searchUsed: false,
+          sources: []
         });
 
       } catch (error) {
@@ -488,6 +701,7 @@ app.post('/api/chat', requireFirebaseAuth, async (req, res) => {
 app.listen(PORT, () => {
   console.log(`SWAYAM AI server running on port ${PORT}`);
 });
+
 
 
 
