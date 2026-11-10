@@ -201,7 +201,7 @@ const recentWomenBusinessContext = userMessages.some(item => {
   return explicitInformationRequest ||
     categorySearch ||
     womenBusinessSearch;
-  
+}
 
 function getIntentInstruction(intent) {
   switch (intent) {
