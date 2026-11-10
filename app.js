@@ -249,35 +249,6 @@ function updateAvatar(mood = "neutral") {
   if (reaction) reaction.textContent = data.emoji;
 }
 
-
-  const maleFaces = {
-    happy: "😄",
-    sad: "😔",
-    angry: "😌",
-    tired: "😴",
-    excited: "🤩",
-    neutral: "🙂"
-  };
-
-  const face = persona === "male"
-    ? maleFaces[mood] || "🙂"
-    : data.emoji;
-if (avatar) {
-    if (persona === "female") {
-      avatar.innerHTML = '<img src="./file_00000000debc82119f61e08c4f8d90f6.png" alt="SWAYAM AI મહિલા મિત્ર">';
-    } else {
-      avatar.innerHTML = `<span>${face}</span>`;
-    }
-
-    avatar.dataset.persona = persona;
-    avatar.dataset.mood = mood;
-  }
-  
-
-  if (moodLine) moodLine.textContent = data.text;
-  if (reaction) reaction.textContent = data.emoji;
-}
-
 function showMessage(text, who) {
   if (!messages) return;
 
@@ -383,12 +354,10 @@ function getPreferredVoice(languageCode = "gu-IN") {
 
   if (!matchingVoices.length) return null;
 
-  // ગુજરાતી માટે ઉપલબ્ધ પ્રથમ ગુજરાતી અવાજ
   if (languagePrefix === "gu") {
     return matchingVoices[0];
   }
 
-  // હિન્દી / અંગ્રેજી માટે નામ પરથી gender ઓળખવાનો પ્રયાસ
   const femaleNames =
     /female|woman|zira|heera|veena|kalpana|lekha|priya|aditi/i;
 
@@ -410,7 +379,6 @@ function getPreferredVoice(languageCode = "gu-IN") {
 function speak(text) {
   if (!("speechSynthesis" in window) || !speakEnabled) return;
 
-  // અવાજ માટે Markdown ચિહ્નો દૂર કરો
   const cleanSpeech = String(text)
     .replace(/\*\*(.*?)\*\*/g, "$1")
     .replace(/\*(.*?)\*/g, "$1")
@@ -831,4 +799,5 @@ onAuthStateChanged(auth, async (user) => {
     if (messages) messages.innerHTML = "";
   }
 });
+
 
