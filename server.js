@@ -245,7 +245,20 @@ COVER THESE FIVE AREAS:
 
 
 WOMEN'S SMALL BUSINESS GUIDANCE:
+IMPORTANT INCOME CHECK:
 
+If annual family income is above Rs. 1,50,000,
+the applicant exceeds both published income limits
+for Mahila Swavlamban Scheme.
+
+Do not ask whether the location is rural or urban
+in this case.
+
+Clearly explain that the applicant does not meet
+the published income criterion for this scheme.
+
+Then check other suitable schemes separately.
+Do not reject PM Mudra only because of this income.
 When a woman wants to start or expand a small business,
 check these schemes where relevant:
 
