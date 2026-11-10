@@ -178,31 +178,40 @@ function shouldUseGovernmentSearch(message, history = []) {
     : [];
 
   const explicitInformationRequest =
-    /પાત્રતા|લાયકાત|આવક મર્યાદા|કેટલી રકમ|કેટલો લાભ|દસ્તાવેજ|અરજી કેવી|ક્યાં અરજી|યોજનાઓની યાદી|કઈ કઈ યોજના|કઈ યોજના|સત્તાવાર માહિતી|નિયમો|હાલમાં|latest|eligibility|documents|apply|benefit|income limit|how to apply|scheme list/.test(text);
+    /પાત્રતા|લાયકાત|આવક મર્યાદા|કેટલી રકમ|કેટલો લાભ|દસ્તાવેજ|અરજી કેવી|ક્યાં અરજી|યોજનાઓની યાદી|કઈ કઈ યોજના|કઈ યોજના|સત્તાવાર માહિતી|નિયમો|હાલમાં|latest|eligibility|documents|apply|benefit|income limit|how to apply|scheme list|yojna|yojana/.test(text);
 
   const categorySearch =
-    /મહિલા.*યોજના|બાળકો.*યોજના|યુવાનો.*યોજના|રોજગાર.*યોજના|સ્ટાર્ટઅપ.*યોજના|ધંધા.*લોન|મહિલા.*લોન|યોજનાઓની યાદી|scholarship|startup scheme|employment scheme/.test(text);
-const recentWomenBusinessContext = userMessages.some(item => {
-    const oldText = cleanText(
-      item.content || item.text ||
+    /મહિલા.*યોજના|બાળકો.*યોજના|યુવાનો.*યોજના|રોજગાર.*યોજના|સ્ટાર્ટઅપ.*યોજના|ધંધા.*લોન|મહિલા.*લોન|યોજનાઓની યાદી|mahila.*yojna|women.*scheme|scholarship|startup scheme|employment scheme/.test(text);
+
+  const recentTexts = userMessages.map(item =>
+    cleanText(
+      item.content ||
+      item.text ||
       (Array.isArray(item.parts) ? item.parts[0]?.text : ''),
       2000
-    ).toLowerCase();
+    ).toLowerCase()
+  );
 
-    return /મહિલા|મહિલાઓ|સ્ત્રી|mahila|mahilaon|women|નાનો ધંધો|ધંધો શરૂ|વ્યવસાય|small business|business start|dhandho|rojgar/.test(oldText);
-  });
+  const recentGovernmentContext =
+    [...recentTexts, text].some(item =>
+      /સરકારી યોજના|સરકારની યોજના|યોજના|મહિલા|રોજગાર|લોન|yojana|yojna|sarkari|mahila|women|rojgar|loan|scheme|government/.test(item)
+    );
 
   const businessTypeMentioned =
-    /સીવણ|સિવણ|સિલાઈ|ટેલરિંગ|બ્યુટી પાર્લર|કરિયાણ|નાસ્તા|ફરસાણ|પાપડ|મસાલા|ટિફિન|ખાદ્ય|ડેરી|પશુપાલન|હસ્તકલા|દુકાન|tailoring|beauty parlour|beauty parlor|kirana|grocery|snacks|papad|masala|tiffin|dairy|handicraft|shop|boutique|dhandho/.test(text);
+    [...recentTexts, text].some(item =>
+      /સીવણ|સિવણ|સિલાઈ|ટેલરિંગ|બ્યુટી પાર્લર|કરિયાણ|નાસ્તા|ફરસાણ|પાપડ|મસાલા|ટિફિન|ખાદ્ય|ડેરી|પશુપાલન|હસ્તકલા|દુકાન|sivan|silai|tailoring|dukan|beauty parlour|beauty parlor|kirana|grocery|snacks|papad|masala|tiffin|dairy|handicraft|shop|boutique/.test(item)
+    );
 
-  const womenBusinessSearch =
-    recentWomenBusinessContext && businessTypeMentioned;
+  const enoughDetails = userMessages.length >= 3;
 
   return explicitInformationRequest ||
     categorySearch ||
-    womenBusinessSearch;
+    (
+      recentGovernmentContext &&
+      businessTypeMentioned &&
+      enoughDetails
+    );
 }
-
 function getIntentInstruction(intent) {
   switch (intent) {
     case 'government':
@@ -246,7 +255,21 @@ check these schemes where relevant:
 - PM Mudra Yojana and other applicable central schemes.
 
 Never assume every woman qualifies for every scheme.
-Never guess loan amounts, subsidy, interest rates or eligibility.
+IMPORTANT LOAN AND BENEFIT RULES:
+
+- A loan is not a free government grant.
+- PM Mudra Shishu is a bank loan, not free money.
+- Never say a loan is guaranteed or automatically approved.
+- Explain interest, repayment and bank approval when verified.
+- Clearly separate loans, subsidies and grants.
+- Do not claim a woman qualifies only because she is a woman.
+
+ROMAN GUJARATI:
+- Understand common Roman Gujarati words such as
+  sivan, silai, dukan, dhandho, mahila, loan,
+  ketla rupiya, kya apply karvu and yojna.
+- Reply in the same language style the user prefers.
+- Preserve the meaning of the user's original question.
 Verify current details using official government sources.
 
 For small-business guidance, ask one question at a time:
