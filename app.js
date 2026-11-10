@@ -263,12 +263,17 @@ function updateAvatar(mood = "neutral") {
   const face = persona === "male"
     ? maleFaces[mood] || "🙂"
     : data.emoji;
+if (avatar) {
+    if (persona === "female") {
+      avatar.innerHTML = '<img src="./file_00000000debc82119f61e08c4f8d90f6.png" alt="SWAYAM AI મહિલા મિત્ર">';
+    } else {
+      avatar.innerHTML = `<span>${face}</span>`;
+    }
 
-  if (avatar) {
-    avatar.innerHTML = `<span>${face}</span>`;
     avatar.dataset.persona = persona;
     avatar.dataset.mood = mood;
   }
+  
 
   if (moodLine) moodLine.textContent = data.text;
   if (reaction) reaction.textContent = data.emoji;
