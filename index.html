@@ -1,4 +1,5 @@
 
+HTML
 
 <!doctype html>
 <html lang="gu">
@@ -10,7 +11,73 @@
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="stylesheet" href="/style.css">
 <title>SWAYAM AI</title>
+
+<style>
+.music-card {
+  margin-top:18px;
+  padding:18px;
+}
+.music-card h2 {
+  margin-top:0;
+}
+.music-intro {
+  color:#667085;
+  font-size:14px;
+}
+.music-search {
+  display:flex;
+  gap:8px;
+  margin:15px 0;
+}
+.music-search input {
+  flex:1;
+  min-width:0;
+  padding:12px;
+  border:1px solid #ccd3df;
+  border-radius:10px;
+}
+.music-search button,
+.music-category button {
+  border:0;
+  border-radius:10px;
+  padding:11px 13px;
+  background:#263b65;
+  color:white;
+  cursor:pointer;
+}
+.music-category {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  margin-top:12px;
+}
+.music-category button {
+  background:#eef2fa;
+  color:#243653;
+  text-align:left;
+  min-height:55px;
+  font-size:14px;
+}
+.music-category button:active {
+  background:#dce6fa;
+}
+.music-heading {
+  margin:20px 0 8px;
+  font-size:16px;
+}
+.music-note {
+  font-size:12px;
+  color:#777;
+  margin-top:15px;
+}
+@media(max-width:360px) {
+  .music-category {
+    grid-template-columns:1fr;
+  }
+}
+</style>
 </head>
+
 <body>
 <main class="shell">
 
@@ -81,18 +148,127 @@
     </div>
 
   </div>
+
+  <!-- SWAYAM MUSIC -->
+
+  <section class="card music-card" id="musicPanel">
+
+    <h2>🎵 SWAYAM MUSIC</h2>
+
+    <p class="music-intro">
+      તમારી યાદો, તમારો આનંદ અને મનની શાંતિ માટે સંગીત.
+    </p>
+
+    <div class="music-search">
+      <input
+        id="musicSearch"
+        type="search"
+        placeholder="ગીત અથવા કલાકારનું નામ લખો..."
+      >
+      <button id="musicSearchBtn">શોધો</button>
+    </div>
+
+    <h3 class="music-heading">🎼 જૂનાં યાદગાર ગીતો</h3>
+
+    <div class="music-category">
+      <button data-query="1950s old Hindi film songs">🎙️ 1950ના ગીતો</button>
+      <button data-query="1960s old Hindi classic songs">🎙️ 1960ના ગીતો</button>
+      <button data-query="1970s old Hindi Bollywood songs">🎙️ 1970ના ગીતો</button>
+      <button data-query="1980s Hindi old songs">🎵 1980ના ગીતો</button>
+      <button data-query="1990s Hindi romantic songs">🎵 1990ના ગીતો</button>
+      <button data-query="2000s Hindi Bollywood songs">🎵 2000 પછીનાં ગીતો</button>
+    </div>
+
+    <h3 class="music-heading">🌼 ગુજરાતી અને ભારતીય સંગીત</h3>
+
+    <div class="music-category">
+      <button data-query="Gujarati old songs">🎶 જૂનાં ગુજરાતી ગીતો</button>
+      <button data-query="New Gujarati songs">🎶 નવાં ગુજરાતી ગીતો</button>
+      <button data-query="Gujarati Garba songs">💃 ગુજરાતી ગરબા</button>
+      <button data-query="Hindi bhajan aarti">🙏 ભજન અને આરતી</button>
+      <button data-query="Indian classical music">🎻 શાસ્ત્રીય સંગીત</button>
+      <button data-query="Indian ghazal songs">🎤 ગઝલ</button>
+    </div>
+
+    <h3 class="music-heading">🧘 Relaxation & Wellness Music</h3>
+
+    <p class="music-intro">
+      થાકેલા મનને આરામ આપવા માટે હળવું સંગીત અને કુદરતી અવાજો.
+    </p>
+
+    <div class="music-category">
+      <button data-query="Relaxing instrumental music">🌿 Relaxing Music</button>
+      <button data-query="Meditation peaceful music">🧘 Meditation Music</button>
+      <button data-query="Deep sleep relaxing music">🌙 Sleep Music</button>
+      <button data-query="Stress relief calming music">💚 Stress Relief Music</button>
+      <button data-query="Rain sounds nature relaxation">🌧️ વરસાદના અવાજ</button>
+      <button data-query="Ocean waves forest birds nature sounds">🌊 Nature Sounds</button>
+      <button data-query="Peaceful piano instrumental music">🎹 Piano Music</button>
+      <button data-query="Soft flute relaxing instrumental music">🪈 વાંસળીનું સંગીત</button>
+    </div>
+
+    <p class="music-note">
+      ગીત પસંદ કરતાં YouTube ખુલશે. ગીતોની ઉપલબ્ધતા અને જાહેરાત
+      YouTube પર આધારિત છે. Relaxation Music આરામ માટે છે,
+      તબીબી સારવાર નથી.
+    </p>
+
+  </section>
+
+  <!-- SWAYAM MUSIC END -->
+
 </section>
 
 <footer>
-  તમારી વાતચીત તમારા એકાઉન્ટ સાથે જોડાય છે. આ પ્રારંભિક વર્ઝન છે; સંવેદનશીલ માહિતી શેર ન કરો.
+  તમારી વાતચીત તમારા એકાઉન્ટ સાથે જોડાય છે.
+  આ પ્રારંભિક વર્ઝન છે; સંવેદનશીલ માહિતી શેર ન કરો.
 </footer>
 
 </main>
 
-<script type="module" src="./app.js"></script>
-<div id="voiceInfo" style="font-size:13px; padding:10px; margin:10px; color:#555;">
+<div id="voiceInfo" style="font-size:13px;padding:10px;margin:10px;color:#555;">
   અવાજની તપાસ થઈ રહી છે...
 </div>
+
+<script type="module" src="./app.js"></script>
+
+<script>
+(function () {
+
+  function openYouTube(query) {
+    if (!query || !query.trim()) return;
+
+    const url =
+      "https://www.youtube.com/results?search_query=" +
+      encodeURIComponent(query.trim());
+
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
+
+  document.querySelectorAll("#musicPanel [data-query]")
+    .forEach(function (button) {
+      button.addEventListener("click", function () {
+        openYouTube(button.getAttribute("data-query"));
+      });
+    });
+
+  const searchInput = document.getElementById("musicSearch");
+  const searchButton = document.getElementById("musicSearchBtn");
+
+  searchButton.addEventListener("click", function () {
+    openYouTube(searchInput.value);
+  });
+
+  searchInput.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      openYouTube(searchInput.value);
+    }
+  });
+
+})();
+</script>
+
 </body>
 </html>
 
