@@ -210,7 +210,6 @@ function addPersonaSelector() {
   }
 }
 
-
 // મૂડ અને અવતાર
 function updateAvatar(mood = "neutral") {
   const data = moods[mood] || moods.neutral;
@@ -231,6 +230,9 @@ function updateAvatar(mood = "neutral") {
     neutral: "🙂"
   };
 
+  const face = persona === "male"
+    ? maleFaces[mood] || "🙂"
+    : data.emoji;
 
   if (avatar) {
     if (persona === "female") {
