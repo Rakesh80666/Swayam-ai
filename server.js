@@ -188,10 +188,15 @@ app.post('/api/chat', requireFirebaseAuth, async (req, res) => {
           model: modelName,
           systemInstruction
         });
+const model = genAI.getGenerativeModel({
+  model: modelName,
+  systemInstruction
+});
 
-        const result = await model.generateContent({
-          contents
-        });
+const result = await model.generateContent({
+  contents
+});
+        
 
         const reply = result.response.text();
 
