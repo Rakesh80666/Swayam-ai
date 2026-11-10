@@ -46,10 +46,10 @@ const genAI = process.env.GEMINI_API_KEY
   ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
   : null;
 
-const modelNames = [
-'gemini-3.5-flash'
-];
 
+const modelNames = [
+  'gemini-3.5-flash-lite'
+];
 function requireFirebaseAuth(req, res, next) {
   if (!firebaseAuth) {
     return res.status(503).json({
