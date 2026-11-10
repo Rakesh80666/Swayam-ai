@@ -183,13 +183,32 @@ app.post('/api/chat', requireFirebaseAuth, async (req, res) => {
     let lastError;
 
     for (const modelName of modelNames) {
-      try {
-        const model = genAI.getGenerativeModel({
-          model: modelName,
-          systemInstruction
-      
-       const model = genAI.getGenerativeModel({
-  model: modelName,
+  try {
+    const model = genAI.getGenerativeModel({
+      model: modelName,
+      systemInstruction,
+      generationConfig: {
+        temperature: 0.8,
+        topP: 0.9,
+        maxOutputTokens: 500
+      }
+    });
+
+    const result = await model.generateContent({
+      contents
+    });
+
+    const reply = result.response.text();
+
+    if (!reply) {
+      throw new Error('Empty AI response');
+    }
+
+    return res.json({
+      reply,
+      mood,
+      model: modelName
+    });
   systemInstruction,
   generationConfig: {
     temperature: 0.8,
