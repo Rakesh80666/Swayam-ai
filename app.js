@@ -250,7 +250,14 @@ function showMessage(text, who) {
   const bubble = document.createElement("div");
 
   bubble.className = who === "user" ? "user" : "bot";
-  bubble.textContent = text;
+
+  const cleanText = String(text)
+    .replace(/\*\*(.*?)\*\*/g, "$1")
+    .replace(/\*(.*?)\*/g, "$1")
+    .replace(/^#{1,6}\s*/gm, "")
+    .replace(/`([^`]+)`/g, "$1");
+
+  bubble.textContent = cleanText;
 
   messages.appendChild(bubble);
   messages.scrollTop = messages.scrollHeight;
@@ -369,11 +376,23 @@ function getPreferredVoice(languageCode = "gu-IN") {
 function speak(text) {
   if (!("speechSynthesis" in window) || !speakEnabled) return;
 
+  // અવાજ માટે Markdown ચિહ્નો દૂર કરો
+  const cleanSpeech = String(text)
+    .replace(/\*\*(.*?)\*\*/g, "$1")
+    .replace(/\*(.*?)\*/g, "$1")
+    .replace(/#{1,6}\s*/g, "")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/^\s*[-•]\s*/gm, "")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .trim();
+
+  if (!cleanSpeech) return;
+
   speechSynthesis.cancel();
 
-  const utterance = new SpeechSynthesisUtterance(text);
+  const utterance = new SpeechSynthesisUtterance(cleanSpeech);
 
-  const languageCode = detectReplyLanguage(text);
+  const languageCode = detectReplyLanguage(cleanSpeech);
   const selectedVoice = getPreferredVoice(languageCode);
 
   utterance.lang = languageCode;
