@@ -1,285 +1,772 @@
 
+
 <!doctype html>
 <html lang="gu">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#17233f">
-<meta name="description" content="SWAYAM AI тАФ ркдркорк╛рк░рлА рк╕рк╛ркерлЗ ркЪрк╛рк▓ркдрлА AI ркорк┐ркдрлНрк░">
+<meta name="description" content="SWAYAM AI — તમારી સાથે ચાલતી AI મિત્ર">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="stylesheet" href="/style.css">
 <title>SWAYAM AI</title>
 
 <style>
-.home-intro { text-align:center; padding:18px 12px; }
-.home-intro h2 { margin:10px 0 5px; }
-.home-intro p { color:#667085; margin:5px 0; font-size:14px; }
-.main-menu { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:13px; margin:15px 0 22px; }
-.menu-item { border:1px solid #e0e6f0; border-radius:17px; background:white; padding:22px 10px; text-align:center; color:#243653; cursor:pointer; box-shadow:0 4px 14px rgba(30,50,90,.06); }
-.menu-item:active { transform:scale(.98); background:#eef3ff; }
-.menu-icon { display:block; font-size:32px; margin-bottom:8px; }
-.menu-item strong { display:block; font-size:16px; }
-.menu-item small { display:block; margin-top:5px; color:#758096; font-size:12px; }
-.companion-small { display:flex; align-items:center; gap:12px; padding:10px 13px; margin-bottom:15px; border-radius:16px; background:linear-gradient(120deg,#172c4b,#344d79); color:white; }
-.companion-small .avatarwrap { width:58px; height:58px; min-width:58px; margin:0; }
-.companion-small .avatar { width:52px; height:52px; font-size:29px; }
-.companion-small h2 { font-size:16px; margin:0 0 4px; color:white; }
-.companion-small p { font-size:12px; margin:0; color:#e0e9f7; }
-.companion-small .companion-actions { margin-left:auto; display:flex; flex-direction:column; gap:5px; }
-.companion-small .textbtn { color:white; font-size:12px; }
-.section-heading { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:12px 0; }
-.section-heading h2 { margin:0; font-size:20px; }
-.home-btn { border:0; border-radius:10px; background:#e9eef8; color:#263b65; padding:10px 14px; font-weight:600; cursor:pointer; }
-.app-section { display:none; }
-.app-section.active { display:block; }
-.music-card { padding:16px; }
-.music-card h2 { margin-top:0; }
-.music-intro { color:#667085; font-size:14px; }
-.music-category { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; margin-top:12px; }
-.music-category button { border:0; border-radius:11px; padding:13px 10px; background:#eef2fa; color:#243653; text-align:left; min-height:54px; font-size:14px; cursor:pointer; }
-.music-category button:active { background:#dce6fa; }
-.music-heading { margin:20px 0 8px; font-size:16px; }
-.music-note { font-size:12px; color:#777; margin-top:15px; }
-.player-box { background:#f0f4fb; border-radius:15px; padding:15px; margin-top:15px; }
-.player-box h3 { margin:0 0 10px; }
-.player-box audio { width:100%; margin:8px 0; }
-.player-controls { display:flex; gap:8px; margin-top:10px; }
-.player-controls button, .file-button { border:0; border-radius:10px; padding:11px 14px; background:#263b65; color:white; cursor:pointer; }
-.file-button { display:inline-block; margin-top:8px; }
-#mp3Files { display:none; }
-#mp3List { padding-left:20px; font-size:14px; }
-#mp3List li { padding:7px 3px; cursor:pointer; }
-#mp3List li.selected { color:#2456a6; font-weight:bold; }
-.feature-message { padding:20px; text-align:center; line-height:1.7; }
-.feature-message .big-icon { font-size:42px; }
-.feature-message p { color:#667085; font-size:14px; }
+.home-intro {
+  text-align:center;
+  padding:18px 12px;
+}
+.home-intro h2 {
+  margin:10px 0 5px;
+}
+.home-intro p {
+  color:#667085;
+  margin:5px 0;
+  font-size:14px;
+}
+.main-menu {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:13px;
+  margin:15px 0 22px;
+}
+.menu-item {
+  border:1px solid #e0e6f0;
+  border-radius:17px;
+  background:white;
+  padding:22px 10px;
+  text-align:center;
+  color:#243653;
+  cursor:pointer;
+  box-shadow:0 4px 14px rgba(30,50,90,.06);
+}
+.menu-item:active {
+  transform:scale(.98);
+  background:#eef3ff;
+}
+.menu-icon {
+  display:block;
+  font-size:32px;
+  margin-bottom:8px;
+}
+.menu-item strong {
+  display:block;
+  font-size:16px;
+}
+.menu-item small {
+  display:block;
+  margin-top:5px;
+  color:#758096;
+  font-size:12px;
+}
+.companion-small {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:10px 13px;
+  margin-bottom:15px;
+  border-radius:16px;
+  background:linear-gradient(120deg,#172c4b,#344d79);
+  color:white;
+}
+.companion-small .avatarwrap {
+  width:58px;
+  height:58px;
+  min-width:58px;
+  margin:0;
+}
+.companion-small .avatar {
+  width:52px;
+  height:52px;
+  font-size:29px;
+}
+.companion-small h2 {
+  font-size:16px;
+  margin:0 0 4px;
+  color:white;
+}
+.companion-small p {
+  font-size:12px;
+  margin:0;
+  color:#e0e9f7;
+}
+.companion-small .companion-actions {
+  margin-left:auto;
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+}
+.companion-small .textbtn {
+  color:white;
+  font-size:12px;
+}
+.section-heading {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin:12px 0;
+}
+.section-heading h2 {
+  margin:0;
+  font-size:20px;
+}
+.home-btn {
+  border:0;
+  border-radius:10px;
+  background:#e9eef8;
+  color:#263b65;
+  padding:10px 14px;
+  font-weight:600;
+  cursor:pointer;
+}
+.app-section {
+  display:none;
+}
+.app-section.active {
+  display:block;
+}
+.music-card {
+  padding:16px;
+}
+.music-card h2 {
+  margin-top:0;
+}
+.music-intro {
+  color:#667085;
+  font-size:14px;
+}
+.music-category {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px;
+  margin-top:12px;
+}
+.music-category button {
+  border:0;
+  border-radius:11px;
+  padding:13px 10px;
+  background:#eef2fa;
+  color:#243653;
+  text-align:left;
+  min-height:54px;
+  font-size:14px;
+  cursor:pointer;
+}
+.music-category button:active {
+  background:#dce6fa;
+}
+.music-heading {
+  margin:20px 0 8px;
+  font-size:16px;
+}
+.music-note {
+  font-size:12px;
+  color:#777;
+  margin-top:15px;
+}
+.player-box {
+  background:#f0f4fb;
+  border-radius:15px;
+  padding:15px;
+  margin-top:15px;
+}
+.player-box h3 {
+  margin:0 0 10px;
+}
+.player-box audio {
+  width:100%;
+  margin:8px 0;
+}
+.player-controls {
+  display:flex;
+  gap:8px;
+  margin-top:10px;
+}
+.player-controls button,
+.file-button {
+  border:0;
+  border-radius:10px;
+  padding:11px 14px;
+  background:#263b65;
+  color:white;
+  cursor:pointer;
+}
+.file-button {
+  display:inline-block;
+  margin-top:8px;
+}
+#mp3Files {
+  display:none;
+}
+#mp3List {
+  padding-left:20px;
+  font-size:14px;
+}
+#mp3List li {
+  padding:7px 3px;
+  cursor:pointer;
+}
+#mp3List li.selected {
+  color:#2456a6;
+  font-weight:bold;
+}
+.feature-message {
+  padding:20px;
+  text-align:center;
+  line-height:1.7;
+}
+.feature-message .big-icon {
+  font-size:42px;
+}
+.feature-message p {
+  color:#667085;
+  font-size:14px;
+}
 @media(max-width:360px) {
-  .music-category { grid-template-columns:1fr; }
-  .menu-item { padding:17px 8px; }
+  .music-category {
+    grid-template-columns:1fr;
+  }
+  .menu-item {
+    padding:17px 8px;
+  }
 }
 </style>
 </head>
 
 <body>
 <main class="shell">
+
 <header>
   <div class="brandmark">S</div>
   <div>
     <h1>SWAYAM AI</h1>
-    <p>AI ркдркорк╛рк░рк╛ рккрк░ рк╣рк╛рк╡рлА ркирк╣рлАркВ ркерк╛ркп; ркдркорк╛рк░рлА рк╕рк╛ркерлЗ ркЪрк╛рк▓рк╢рлЗ.</p>
+    <p>AI તમારા પર હાવી નહીં થાય; તમારી સાથે ચાલશે.</p>
   </div>
-  <span id="status" class="status">ркЬрлЛркбрк╛ркг ркдрккрк╛рк╕рлА рк░рк╣рлНркпрлБркВ ркЫрлЗтАж</span>
+  <span id="status" class="status">SWAYAM AI તૈયાર છે.</span>
 </header>
 
+<!-- LOGIN AND SIGNUP -->
 <section class="auth card" id="authPanel">
-  <h2>ркдркорк╛рк░рлБркВ рк╕рлНрк╡рк╛ркЧркд ркЫрлЗ</h2>
-  <p>ркдркорк╛рк░рк╛ ркИркорлЗрк▓ркерлА рккрлНрк░рк╡рлЗрк╢ ркХрк░рлЛ ркЕркерк╡рк╛ ркирк╡рлБркВ ркПркХрк╛ркЙркирлНркЯ ркмркирк╛рк╡рлЛ.</p>
-  <input id="email" type="email" autocomplete="email" placeholder="ркИркорлЗрк▓ рк╕рк░ркирк╛ркорлБркВ">
-  <input id="password" type="password" autocomplete="current-password" placeholder="рккрк╛рк╕рк╡рк░рлНркб (ркУркЫрк╛ркорк╛ркВ ркУркЫрк╛ 6 ркЕркХрлНрк╖рк░)">
+  <h2>SWAYAM AIમાં સ્વાગત છે</h2>
+
+  <p>
+    તમારી પોતાની AI મિત્ર સાથે વાત કરવા માટે
+    લોગિન કરો અથવા નવું ખાતું બનાવો.
+  </p>
+
+  <input
+    id="email"
+    type="email"
+    autocomplete="email"
+    placeholder="તમારું ઇમેઇલ લખો"
+  >
+
+  <input
+    id="password"
+    type="password"
+    autocomplete="current-password"
+    placeholder="પાસવર્ડ (ઓછામાં ઓછા 6 અક્ષર)"
+  >
+
   <div class="actions">
-    <button id="loginBtn">рк▓рлЙркЧ ркЗрки</button>
-    <button id="signupBtn" class="secondary">ркирк╡рлБркВ ркПркХрк╛ркЙркирлНркЯ</button>
+    <button id="loginBtn">લોગિન કરો</button>
+    <button id="signupBtn" class="secondary">નવું ખાતું બનાવો</button>
   </div>
-  <button id="googleBtn" class="google secondary">Google ркерлА рккрлНрк░рк╡рлЗрк╢</button>
-  <button id="resetBtn" class="secondary">Forgot Password?</button>
-  <p id="authMsg" class="hint">Login or create your account.</p>
+
+  <button id="googleBtn" class="google secondary">
+    Google દ્વારા લોગિન કરો
+  </button>
+
+  <button id="resetBtn" class="secondary">
+    પાસવર્ડ ભૂલી ગયા છો?
+  </button>
+
+  <p id="authMsg" class="hint">
+    લોગિન કરો અથવા નવું ખાતું બનાવો.
+  </p>
 </section>
 
+<!-- MAIN APP -->
 <section id="chatPanel" class="hidden">
+
+  <!-- SMALL AI COMPANION -->
   <div class="companion-small">
+
     <div class="avatarwrap">
-      <div class="avatar" id="avatar"><span>ЁЯЩВ</span></div>
+      <div class="avatar" id="avatar">
+        <span>😊</span>
+      </div>
       <div class="pulse"></div>
     </div>
+
     <div>
-      <h2 id="greeting">рк╣рлБркВ ркЕрк╣рлАркВ ркЫрлБркВ ЁЯЩВ</h2>
-      <p id="moodLine">ркЖркЬрлЗ ркдркорлЗ ркЬрлЗ рк╡рк╛ркд ркХрк░рк╡рк╛ ркорк╛ркВркЧрлЛ ркдрлЗ ркХрк╣рлЛ.</p>
-      <div id="reaction" class="reaction">ЁЯМ╝</div>
+      <h2 id="greeting">હું તમારી સાથે છું 😊</h2>
+      <p id="moodLine">
+        આજે તમારા મનમાં શું ચાલી રહ્યું છે?
+        નિઃસંકોચ વાત કરો.
+      </p>
+      <div id="reaction" class="reaction">💜</div>
     </div>
+
     <div class="companion-actions">
-      <button id="logoutBtn" class="textbtn">ркмрк╣рк╛рк░ ркирлАркХрк│рлЛ</button>
+      <button id="logoutBtn" class="textbtn">
+        લોગઆઉટ
+      </button>
     </div>
+
   </div>
 
+  <!-- HOME SCREEN -->
   <section id="homeSection" class="app-section active">
+
     <div class="home-intro card">
-      <h2>ркиркорк╕рлНркдрлЗ! рк╕рлНрк╡рк╛ркЧркд ркЫрлЗ ЁЯМ╝</h2>
-      <p>ркЖркЬрлЗ ркЖрккркгрлЗ рк╢рлБркВ ркХрк░рлАркП?</p>
-      <p>ркдркоркирлЗ ркЬрлЗ ркЬрлЛркИркП ркдрлЗ рк╡рк┐ркХрк▓рлНркк рккрк╕ркВркж ркХрк░рлЛ.</p>
+      <h2>નમસ્તે! SWAYAM AIમાં તમારું સ્વાગત છે 👋</h2>
+
+      <p>આજે આપણે શું કામ કરીએ?</p>
+
+      <p>
+        તમારી જરૂરિયાત પસંદ કરો.
+        હું તમારી સાથે રહીને મદદ કરીશ.
+      </p>
     </div>
+
     <div class="main-menu">
-      <button class="menu-item" data-open="chatSection"><span class="menu-icon">ЁЯТм</span><strong>Chat</strong><small>ркорки ркЦрлЛрк▓рлАркирлЗ рк╡рк╛ркд ркХрк░рлЛ</small></button>
-      <button class="menu-item" data-open="infoSection"><span class="menu-icon">ЁЯУЪ</span><strong>ркорк╛рк╣рк┐ркдрлА</strong><small>ркЬрк╛ркгркХрк╛рк░рлА ркЕркирлЗ ркорк╛рк░рлНркЧркжрк░рлНрк╢рки</small></button>
-      <button class="menu-item" data-open="musicSection"><span class="menu-icon">ЁЯО╡</span><strong>Music</strong><small>ркЧрлАркдрлЛ ркЕркирлЗ рк╕ркВркЧрлАркд</small></button>
-      <button class="menu-item" data-open="mapSection"><span class="menu-icon">ЁЯУН</span><strong>Map</strong><small>рк╕рлНркерк│рлЛ ркЕркирлЗ ркорк╛рк░рлНркЧркжрк░рлНрк╢рки</small></button>
+
+      <button class="menu-item" data-open="chatSection">
+        <span class="menu-icon">💬</span>
+        <strong>Chat</strong>
+        <small>મારી સાથે વાત કરો</small>
+      </button>
+
+      <button class="menu-item" data-open="infoSection">
+        <span class="menu-icon">📚</span>
+        <strong>માહિતી</strong>
+        <small>જાણકારી અને માર્ગદર્શન મેળવો</small>
+      </button>
+
+      <button class="menu-item" data-open="musicSection">
+        <span class="menu-icon">🎵</span>
+        <strong>Music</strong>
+        <small>ગીતો અને સંગીત સાંભળો</small>
+      </button>
+
+      <button class="menu-item" data-open="mapSection">
+        <span class="menu-icon">🗺️</span>
+        <strong>Map</strong>
+        <small>સ્થળો અને રસ્તા વિશે જાણો</small>
+      </button>
+
     </div>
   </section>
 
+  <!-- CHAT SECTION -->
   <section id="chatSection" class="app-section">
-    <div class="section-heading"><h2>ЁЯТм Chat</h2><button class="home-btn" data-home>тМВ Home</button></div>
+
+    <div class="section-heading">
+      <h2>💬 Chat</h2>
+      <button class="home-btn" data-home>↩ Home</button>
+    </div>
+
     <div class="card chatcard">
+
       <div id="messages" class="messages">
-        <div class="bubble bot">ркиркорк╕рлНркдрлЗ! ркЖркЬрлЗ ркоркиркорк╛ркВ рк╢рлБркВ ркЪрк╛рк▓рлА рк░рк╣рлНркпрлБркВ ркЫрлЗ? рк╣рлБркВ рк╕рк╛ркВркнрк│рлБркВ ркЫрлБркВ. ЁЯМ╝</div>
-      </div>
-      <div class="composer">
-        <button id="micBtn" class="round" title="ркмрлЛрк▓рлАркирлЗ рк▓ркЦрлЛ">ЁЯОЩя╕П</button>
-        <input id="message" placeholder="ркЕрк╣рлАркВ рк▓ркЦрлЛтАж" autocomplete="off">
-        <button id="sendBtn" class="send">ркорлЛркХрк▓рлЛ</button>
-      </div>
-      <div class="tools">
-        <button id="speakToggle" class="small secondary">ЁЯФК ркЕрк╡рк╛ркЬ ркЪрк╛рк▓рлБ</button>
-        <button id="clearBtn" class="small secondary">ркЪрлЗркЯ рк╕рк╛ркл ркХрк░рлЛ</button>
-      </div>
-    </div>
-  </section>
-
-  <section id="infoSection" class="app-section">
-    <div class="section-heading"><h2>ЁЯУЪ ркорк╛рк╣рк┐ркдрлА ркЕркирлЗ ркорк╛рк░рлНркЧркжрк░рлНрк╢рки</h2><button class="home-btn" data-home>тМВ Home</button></div>
-    <div class="card feature-message">
-      <div class="big-icon">ЁЯдЭ</div>
-      <h2>ркдркоркирлЗ ркХркИ ркорк╛рк╣рк┐ркдрлА ркЬрлЛркИркП ркЫрлЗ?</h2>
-      <p>рк╕рк░ркХрк╛рк░рлА ркпрлЛркЬркирк╛ркУ, рк░рлЛркЬркЧрк╛рк░, ркзркВркзрлЛ, рк╢рк┐ркХрлНрк╖ркг, ркЯрлЗркХркирлЛрк▓рлЛркЬрлА ркЕркирлЗ рк░рлЛркЬрк┐ркВркжрк╛ ркЬрлАрк╡ркиркирлА ркорк╛рк╣рк┐ркдрлА ркорк╛ркЯрлЗ SWAYAM AIркирлЗ рккрлВркЫрлЛ.</p>
-      <button id="infoChatBtn">AI рк╕рк╛ркерлЗ рккрлВркЫрлЛ</button>
-    </div>
-  </section>
-
-  <section id="musicSection" class="app-section">
-    <div class="section-heading"><h2>ЁЯО╡ SWAYAM MUSIC</h2><button class="home-btn" data-home>тМВ Home</button></div>
-    <div class="card music-card">
-      <p class="music-intro">ркдркорк╛рк░рлА ркпрк╛ркжрлЛ, ркдркорк╛рк░рлЛ ркЖркиркВркж ркЕркирлЗ ркоркиркирлА рк╢рк╛ркВркдрк┐ ркорк╛ркЯрлЗ рк╕ркВркЧрлАркд.</p>
-      <h3 class="music-heading">ЁЯО╝ ркЬрлВркирк╛ркВ ркпрк╛ркжркЧрк╛рк░ ркЧрлАркдрлЛ</h3>
-      <div class="music-category">
-        <button>ЁЯОЩя╕П 1950ркирк╛ ркЧрлАркдрлЛ</button><button>ЁЯОЩя╕П 1960ркирк╛ ркЧрлАркдрлЛ</button>
-        <button>ЁЯОЩя╕П 1970ркирк╛ ркЧрлАркдрлЛ</button><button>ЁЯО╡ 1980ркирк╛ ркЧрлАркдрлЛ</button>
-        <button>ЁЯО╡ 1990ркирк╛ ркЧрлАркдрлЛ</button><button>ЁЯО╡ 2000 рккркЫрлАркирк╛ркВ ркЧрлАркдрлЛ</button>
-      </div>
-      <h3 class="music-heading">ЁЯМ╝ ркЧрлБркЬрк░рк╛ркдрлА ркЕркирлЗ ркнрк╛рк░ркдрлАркп рк╕ркВркЧрлАркд</h3>
-      <div class="music-category">
-        <button>ЁЯО╢ ркЬрлВркирк╛ркВ ркЧрлБркЬрк░рк╛ркдрлА ркЧрлАркдрлЛ</button><button>ЁЯО╢ ркирк╡рк╛ркВ ркЧрлБркЬрк░рк╛ркдрлА ркЧрлАркдрлЛ</button>
-        <button>ЁЯТГ ркЧрлБркЬрк░рк╛ркдрлА ркЧрк░ркмрк╛</button><button>ЁЯЩП ркнркЬрки ркЕркирлЗ ркЖрк░ркдрлА</button>
-        <button>ЁЯО╗ рк╢рк╛рк╕рлНркдрлНрк░рлАркп рк╕ркВркЧрлАркд</button><button>ЁЯОд ркЧркЭрк▓</button>
-      </div>
-      <h3 class="music-heading">ЁЯзШ Relaxation &amp; Wellness Music</h3>
-      <p class="music-intro">ркЖрк░рк╛рко ркЕркирлЗ рк╢рк╛ркВркдрк┐ ркорк╛ркЯрлЗ рк╣рк│рк╡рлБркВ рк╕ркВркЧрлАркд ркЕркирлЗ ркХрлБркжрк░ркдрлА ркЕрк╡рк╛ркЬрлЛ.</p>
-      <div class="music-category">
-        <button>ЁЯМ┐ Relaxing Music</button><button>ЁЯзШ Meditation Music</button>
-        <button>ЁЯМЩ Sleep Music</button><button>ЁЯТЪ Stress Relief Music</button>
-        <button>ЁЯМзя╕П рк╡рк░рк╕рк╛ркжркирк╛ ркЕрк╡рк╛ркЬ</button><button>ЁЯМК Nature Sounds</button>
-        <button>ЁЯО╣ Piano Music</button><button>ЁЯкИ рк╡рк╛ркВрк╕рк│рлАркирлБркВ рк╕ркВркЧрлАркд</button>
-      </div>
-
-      <div class="player-box">
-        <h3>ЁЯОз My MP3 Player</h3>
-        <p class="music-intro">ркдркорк╛рк░рк╛ ркорлЛркмрк╛ркЗрк▓ркорк╛ркВ рк░рк╣рлЗрк▓рк╛ркВ MP3 ркЧрлАркдрлЛ рккрк╕ркВркж ркХрк░рлАркирлЗ рк╕рк╛ркВркнрк│рлЛ.</p>
-        <label for="mp3Files" class="file-button">ЁЯУВ ркорлЛркмрк╛ркЗрк▓ркорк╛ркВркерлА MP3 рккрк╕ркВркж ркХрк░рлЛ</label>
-        <input id="mp3Files" type="file" accept="audio/*" multiple>
-        <p id="mp3Status" class="music-intro">рк╣ркЬрлБ ркХрлЛркИ ркЧрлАркд рккрк╕ркВркж ркХрк░рлНркпрлБркВ ркиркерлА.</p>
-        <audio id="mp3Audio" controls></audio>
-        <div class="player-controls">
-          <button id="mp3Prev">тПо Previous</button><button id="mp3Next">Next тПн</button>
+        <div class="bubble bot">
+          નમસ્તે! આજે આપણે શું વાત કરીએ?
+          હું તમારી સાથે છું. 💜
         </div>
-        <h3 class="music-heading">ркЧрлАркдрлЛркирлА ркпрк╛ркжрлА</h3>
-        <ol id="mp3List"></ol>
       </div>
-      <p class="music-note">MP3 Player ркдркорк╛рк░рк╛ ркорлЛркмрк╛ркЗрк▓ркорк╛ркВркерлА рккрк╕ркВркж ркХрк░рлЗрк▓рлА ркУркбрк┐ркпрлЛ рклрк╛ркЗрк▓рлЛ рк╡ркЧрк╛ркбрк╢рлЗ. Relaxation Music ркЖрк░рк╛рко ркорк╛ркЯрлЗ ркЫрлЗ, ркдркмрлАркмрлА рк╕рк╛рк░рк╡рк╛рк░ ркиркерлА.</p>
+
+      <div class="composer">
+
+        <button
+          id="micBtn"
+          class="round"
+          title="બોલીને લખો"
+        >
+          🎙️
+        </button>
+
+        <input
+          id="message"
+          placeholder="અહીં લખો..."
+          autocomplete="off"
+        >
+
+        <button id="sendBtn" class="send">
+          મોકલો
+        </button>
+
+      </div>
+
+      <div class="tools">
+
+        <button id="speakToggle" class="small secondary">
+          🔊 અવાજ ચાલુ/બંધ
+        </button>
+
+        <button id="clearBtn" class="small secondary">
+          ચેટ સાફ કરો
+        </button>
+
+      </div>
+
     </div>
   </section>
 
-  <section id="mapSection" class="app-section">
-    <div class="section-heading"><h2>ЁЯУН Map ркЕркирлЗ ркорк╛рк░рлНркЧркжрк░рлНрк╢рки</h2><button class="home-btn" data-home>тМВ Home</button></div>
+  <!-- INFORMATION SECTION -->
+  <section id="infoSection" class="app-section">
+
+    <div class="section-heading">
+      <h2>📚 માહિતી અને માર્ગદર્શન</h2>
+      <button class="home-btn" data-home>↩ Home</button>
+    </div>
+
     <div class="card feature-message">
-      <div class="big-icon">ЁЯЧ║я╕П</div>
-      <h2>ркдркорк╛рк░рлЗ ркХрлНркпрк╛ркВ ркЬрк╡рлБркВ ркЫрлЗ?</h2>
-      <p>ркиркЬрлАркХркирк╛ркВ рк╕рлНркерк│рлЛ, рк╕рк░ркирк╛ркорлБркВ ркЕркирлЗ рк╕рк░рк│ ркнрк╛рк╖рк╛ркорк╛ркВ рк░рк╕рлНркдрк╛ркирлБркВ ркорк╛рк░рлНркЧркжрк░рлНрк╢рки ркЖрккрк╡рк╛ркирлА рк╕рлБрк╡рк┐ркзрк╛ ркЕрк╣рлАркВ ркЬрлЛркбрк╡рк╛ркорк╛ркВ ркЖрк╡рк╢рлЗ.</p>
-      <p>ркЖ рк╡рк┐ркнрк╛ркЧркирлБркВ ркХрк╛рк░рлНркп ркЖркЧрк│ркирк╛ ркдркмркХрлНркХрк╛ркорк╛ркВ рк╢рк░рлВ ркХрк░рлАрк╢рлБркВ.</p>
+
+      <div class="big-icon">💡</div>
+
+      <h2>તમને કઈ માહિતી જોઈએ છે?</h2>
+
+      <p>
+        સરકારી યોજનાઓ, રોજગાર, વ્યવસાય,
+        શિક્ષણ, શિષ્યવૃત્તિ, ટેકનોલોજી
+        અને રોજિંદા જીવનની જરૂરી માહિતી
+        SWAYAM AI પાસેથી મેળવી શકો છો.
+      </p>
+
+      <button id="infoChatBtn">
+        AI સાથે વાત કરો
+      </button>
+
     </div>
   </section>
+
+  <!-- MUSIC SECTION -->
+  <section id="musicSection" class="app-section">
+
+    <div class="section-heading">
+      <h2>🎵 SWAYAM MUSIC</h2>
+      <button class="home-btn" data-home>↩ Home</button>
+    </div>
+
+    <div class="card music-card">
+
+      <p class="music-intro">
+        તમારી પસંદગીનાં જૂનાં, નવાં અને મનપસંદ ગીતો
+        સાંભળવા માટે સંગીતની શ્રેણી પસંદ કરો.
+      </p>
+
+      <h3 class="music-heading">
+        🎼 જૂનાં યાદગાર ગીતો
+      </h3>
+
+      <div class="music-category">
+
+        <button>🎙️ 1950નાં ગીતો</button>
+        <button>🎙️ 1960નાં ગીતો</button>
+        <button>🎙️ 1970નાં ગીતો</button>
+        <button>🎵 1980નાં ગીતો</button>
+        <button>🎵 1990નાં ગીતો</button>
+        <button>🎵 2000 પછીનાં ગીતો</button>
+
+      </div>
+
+      <h3 class="music-heading">
+        💜 ગુજરાતી અને ભારતીય સંગીત
+      </h3>
+
+      <div class="music-category">
+
+        <button>🎶 જૂનાં ગુજરાતી ગીતો</button>
+        <button>🎶 નવાં ગુજરાતી ગીતો</button>
+        <button>💃 ગુજરાતી ગરબા</button>
+        <button>🙏 ભજન અને આરતી</button>
+        <button>🎼 શાસ્ત્રીય સંગીત</button>
+        <button>🎙️ ગઝલ</button>
+
+      </div>
+
+      <h3 class="music-heading">
+        🌿 Relaxation &amp; Wellness Music
+      </h3>
+
+      <p class="music-intro">
+        આરામ અને શાંતિ માટે હળવું સંગીત
+        અને કુદરતી અવાજો સાંભળો.
+      </p>
+
+      <div class="music-category">
+
+        <button>🌿 Relaxing Music</button>
+        <button>🧘 Meditation Music</button>
+        <button>🌙 Sleep Music</button>
+        <button>💆 Stress Relief Music</button>
+        <button>🌧️ વરસાદના અવાજ</button>
+        <button>🌊 Nature Sounds</button>
+        <button>🎹 Piano Music</button>
+        <button>🪈 વાંસળીનું સંગીત</button>
+
+      </div>
+
+      <!-- LOCAL MP3 PLAYER -->
+      <div class="player-box">
+
+        <h3>🎧 My MP3 Player</h3>
+
+        <p class="music-intro">
+          તમારા મોબાઇલમાં રહેલાં MP3 ગીતો પસંદ કરીને
+          અહીં સાંભળી શકો છો.
+        </p>
+
+        <label for="mp3Files" class="file-button">
+          📂 મોબાઇલમાંથી MP3 પસંદ કરો
+        </label>
+
+        <input
+          id="mp3Files"
+          type="file"
+          accept="audio/*"
+          multiple
+        >
+
+        <p id="mp3Status" class="music-intro">
+          અહીંથી કોઈ ગીત પસંદ કરો.
+        </p>
+
+        <audio id="mp3Audio" controls></audio>
+
+        <div class="player-controls">
+          <button id="mp3Prev">⏮ Previous</button>
+          <button id="mp3Next">Next ⏭</button>
+        </div>
+
+        <h3 class="music-heading">ગીતોની યાદી</h3>
+
+        <ol id="mp3List"></ol>
+
+      </div>
+
+      <p class="music-note">
+        MP3 Player તમારા મોબાઇલમાંથી પસંદ કરેલાં ગીતો
+        વગાડવા માટે છે. Relaxation Music આરામ અને
+        મનની શાંતિ માટેનું સંગીત છે.
+      </p>
+
+    </div>
+  </section>
+
+  <!-- MAP SECTION -->
+  <section id="mapSection" class="app-section">
+
+    <div class="section-heading">
+      <h2>🗺️ Map અને માર્ગદર્શન</h2>
+      <button class="home-btn" data-home>↩ Home</button>
+    </div>
+
+    <div class="card feature-message">
+
+      <div class="big-icon">📍</div>
+
+      <h2>તમારે ક્યાં જવું છે?</h2>
+
+      <p>
+        નજીકનાં સ્થળો, સરનામાં અને સરળ રસ્તા વિશે
+        માહિતી મેળવવા માટે SWAYAM AI તમને મદદ કરશે.
+      </p>
+
+      <p>
+        તમે જે સ્થળે જવા માંગો છો તેનું નામ લખીને
+        અથવા બોલીને પૂછી શકો છો.
+      </p>
+
+    </div>
+  </section>
+
 </section>
 
 <footer>
-  ркдркорк╛рк░рлА рк╡рк╛ркдркЪрлАркд ркдркорк╛рк░рк╛ ркПркХрк╛ркЙркирлНркЯ рк╕рк╛ркерлЗ ркЬрлЛркбрк╛ркп ркЫрлЗ.
-  ркЖ рккрлНрк░рк╛рк░ркВркнрк┐ркХ рк╡рк░рлНркЭрки ркЫрлЗ; рк╕ркВрк╡рлЗркжркирк╢рлАрк▓ ркорк╛рк╣рк┐ркдрлА рк╢рлЗрк░ рки ркХрк░рлЛ.
+  SWAYAM AI તમારી સાથે ચાલતી તમારી પોતાની AI મિત્ર છે.
+  <br>
+  આ એક માર્ગદર્શન આપતું સાધન છે;
+  મહત્વના નિર્ણયોમાં સમજદારીથી કામ લો.
 </footer>
+
 </main>
 
-<div id="voiceInfo" style="font-size:13px;padding:10px;margin:10px;color:#555;">
-  ркЕрк╡рк╛ркЬркирлА ркдрккрк╛рк╕ ркеркИ рк░рк╣рлА ркЫрлЗ...
+<div
+  id="voiceInfo"
+  style="font-size:13px;padding:10px;margin:10px;color:#555;"
+>
+  અવાજની સુવિધા તૈયાર થઈ રહી છે...
 </div>
 
 <script type="module" src="./app.js"></script>
+
 <script>
 (function () {
+
   const sections = document.querySelectorAll(".app-section");
+
   function showSection(id) {
-    sections.forEach(section => section.classList.remove("active"));
+
+    sections.forEach(section => {
+      section.classList.remove("active");
+    });
+
     const selected = document.getElementById(id);
-    if (selected) selected.classList.add("active");
-    window.scrollTo({top:0, behavior:"smooth"});
+
+    if (selected) {
+      selected.classList.add("active");
+    }
+
+    window.scrollTo({
+      top:0,
+      behavior:"smooth"
+    });
   }
+
   document.querySelectorAll("[data-open]").forEach(button => {
-    button.addEventListener("click", () => showSection(button.getAttribute("data-open")));
+
+    button.addEventListener("click", () => {
+      showSection(button.getAttribute("data-open"));
+    });
+
   });
+
   document.querySelectorAll("[data-home]").forEach(button => {
-    button.addEventListener("click", () => showSection("homeSection"));
+
+    button.addEventListener("click", () => {
+      showSection("homeSection");
+    });
+
   });
+
   document.getElementById("infoChatBtn").addEventListener("click", function() {
+
     showSection("chatSection");
+
     document.getElementById("message").focus();
+
   });
+
 })();
 
+
+/* LOCAL MP3 PLAYER */
+
 (function () {
+
   const fileInput = document.getElementById("mp3Files");
   const audio = document.getElementById("mp3Audio");
   const list = document.getElementById("mp3List");
   const status = document.getElementById("mp3Status");
+
   let tracks = [];
   let currentTrack = 0;
   let currentUrl = null;
 
   function playTrack(index) {
+
     if (!tracks.length) return;
+
     currentTrack = (index + tracks.length) % tracks.length;
-    if (currentUrl) URL.revokeObjectURL(currentUrl);
+
+    if (currentUrl) {
+      URL.revokeObjectURL(currentUrl);
+    }
+
     currentUrl = URL.createObjectURL(tracks[currentTrack]);
+
     audio.src = currentUrl;
+
     audio.play().catch(() => {
-      status.textContent = "ркЧрлАркд рк╡ркЧрк╛ркбрк╡рк╛ ркорк╛ркЯрлЗ Play ркжркмрк╛рк╡рлЛ.";
+      status.textContent =
+        "ગીત વગાડવા માટે Play દબાવો.";
     });
-    status.textContent = "рк╣рк╛рк▓ркирлБркВ ркЧрлАркд: " + tracks[currentTrack].name;
+
+    status.textContent =
+      "ચાલુ ગીત: " + tracks[currentTrack].name;
+
     renderList();
+
   }
+
   function renderList() {
+
     list.innerHTML = "";
+
     tracks.forEach((file, index) => {
+
       const item = document.createElement("li");
+
       item.textContent = file.name;
-      if (index === currentTrack) item.classList.add("selected");
-      item.addEventListener("click", () => playTrack(index));
+
+      if (index === currentTrack) {
+        item.classList.add("selected");
+      }
+
+      item.addEventListener("click", () => {
+        playTrack(index);
+      });
+
       list.appendChild(item);
+
     });
+
   }
+
   fileInput.addEventListener("change", function() {
+
     tracks = Array.from(fileInput.files || []);
+
     currentTrack = 0;
+
     if (!tracks.length) {
-      status.textContent = "ркХрлЛркИ ркЧрлАркд рккрк╕ркВркж ркХрк░рлНркпрлБркВ ркиркерлА.";
+
+      status.textContent =
+        "કોઈ ગીત પસંદ કરવામાં આવ્યું નથી.";
+
       return;
     }
-    status.textContent = tracks.length + " ркЧрлАркд рккрк╕ркВркж ркеркпрк╛ркВ.";
+
+    status.textContent =
+      tracks.length + " ગીત પસંદ કરવામાં આવ્યાં.";
+
     renderList();
+
     playTrack(0);
+
   });
-  document.getElementById("mp3Prev").addEventListener("click", () => playTrack(currentTrack - 1));
-  document.getElementById("mp3Next").addEventListener("click", () => playTrack(currentTrack + 1));
+
+  document.getElementById("mp3Prev").addEventListener("click", () => {
+    playTrack(currentTrack - 1);
+  });
+
+  document.getElementById("mp3Next").addEventListener("click", () => {
+    playTrack(currentTrack + 1);
+  });
+
   audio.addEventListener("ended", function() {
-    if (tracks.length > 1) playTrack(currentTrack + 1);
+
+    if (tracks.length > 1) {
+      playTrack(currentTrack + 1);
+    }
+
   });
+
   window.addEventListener("beforeunload", function() {
-    if (currentUrl) URL.revokeObjectURL(currentUrl);
+
+    if (currentUrl) {
+      URL.revokeObjectURL(currentUrl);
+    }
+
   });
+
 })();
 </script>
+
 </body>
 </html>
+
 
