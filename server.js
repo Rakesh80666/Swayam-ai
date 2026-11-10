@@ -187,7 +187,7 @@ RESPONSE QUALITY:
 - Do not overwhelm the user with too many steps.
 `;
 
-`;
+
 
 app.get('/api/health', (req, res) => {
   res.status(200).json({
