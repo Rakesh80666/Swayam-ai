@@ -173,7 +173,18 @@ button:disabled {
   display: grid;
   place-items: center;
 }
+.avatar img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center 28%;
+  border-radius: 50%;
+}
 
+.avatar.speaking img {
+  transform: scale(1.03);
+}
 .avatar {
   width: 138px;
   height: 138px;
