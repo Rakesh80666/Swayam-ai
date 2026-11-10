@@ -182,17 +182,26 @@ function shouldUseGovernmentSearch(message, history = []) {
 
   const categorySearch =
     /મહિલા.*યોજના|બાળકો.*યોજના|યુવાનો.*યોજના|રોજગાર.*યોજના|સ્ટાર્ટઅપ.*યોજના|ધંધા.*લોન|મહિલા.*લોન|યોજનાઓની યાદી|scholarship|startup scheme|employment scheme/.test(text);
+const recentWomenBusinessContext = userMessages.some(item => {
+    const oldText = cleanText(
+      item.content || item.text ||
+      (Array.isArray(item.parts) ? item.parts[0]?.text : ''),
+      2000
+    ).toLowerCase();
 
-  // Search after initial personal details have been collected.
-  const enoughConversation =
-    userMessages.length >= 4;
+    return /મહિલા|મહિલાઓ|સ્ત્રી|mahila|mahilaon|women|નાનો ધંધો|ધંધો શરૂ|વ્યવસાય|small business|business start|dhandho|rojgar/.test(oldText);
+  });
+
+  const businessTypeMentioned =
+    /સીવણ|સિવણ|સિલાઈ|ટેલરિંગ|બ્યુટી પાર્લર|કરિયાણ|નાસ્તા|ફરસાણ|પાપડ|મસાલા|ટિફિન|ખાદ્ય|ડેરી|પશુપાલન|હસ્તકલા|દુકાન|tailoring|beauty parlour|beauty parlor|kirana|grocery|snacks|papad|masala|tiffin|dairy|handicraft|shop|boutique|dhandho/.test(text);
+
+  const womenBusinessSearch =
+    recentWomenBusinessContext && businessTypeMentioned;
 
   return explicitInformationRequest ||
     categorySearch ||
-    enoughConversation;
-}
-
-/* GOVERNMENT GUIDANCE */
+    womenBusinessSearch;
+  
 
 function getIntentInstruction(intent) {
   switch (intent) {
@@ -224,6 +233,26 @@ COVER THESE FIVE AREAS:
 5. BUSINESS AND STARTUPS:
    Small business loans, MSME support, startup assistance,
    subsidies, training and entrepreneurship schemes.
+
+WOMEN'S SMALL BUSINESS GUIDANCE:
+When a woman wants to start or expand a small business,
+check these schemes where relevant:
+
+- Gujarat Mahila Swavlamban Scheme (GWEDC).
+- Mukhyamantri Mahila Utkarsh Yojana.
+- Mahila Samriddhi and New Swarnima schemes,
+  where the applicant's category is eligible.
+- PMEGP for new micro-enterprises.
+- PM Mudra Yojana and other applicable central schemes.
+
+Never assume every woman qualifies for every scheme.
+Never guess loan amounts, subsidy, interest rates or eligibility.
+Verify current details using official government sources.
+
+For small-business guidance, ask one question at a time:
+First ask the business type, then approximate investment,
+then location if required.
+Once the business type is known, search for matching schemes.
 
 GEOGRAPHIC PRIORITY:
 - First consider schemes applicable in Gujarat when the
