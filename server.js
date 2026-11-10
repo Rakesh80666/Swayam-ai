@@ -107,13 +107,13 @@ function detectMood(message) {
   return 'calm';
 }
 
-/* NEW FEATURE: SMART INTENT DETECTION */
+/* SMART INTENT DETECTION */
 
-function detectIntent(message) {
+function detectIntent(message, history = []) {
   const text = message.toLowerCase();
 
   if (
-    /સરકારી યોજના|સરકારની યોજના|સરકારી લાભ|પેન્શન|રેશન કાર્ડ|સબસિડી|yojana|sarkari|pension|ration card|subsidy/.test(text)
+    /સરકારી યોજના|સરકારની યોજના|સરકારી લાભ|પેન્શન|વૃદ્ધ પેન્શન|રેશન કાર્ડ|સબસિડી|yojana|yojna|sarkari|pension|vruddh|old age pension|ration card|subsidy/.test(text)
   ) {
     return 'government';
   }
@@ -142,6 +142,30 @@ function detectIntent(message) {
     return 'learning';
   }
 
+  // Continue the recent government-scheme conversation
+  // when the user replies with short answers like age or income.
+
+  const recentHistory = Array.isArray(history)
+    ? history.slice(-6)
+    : [];
+
+  const recentGovernmentContext = recentHistory.some(item => {
+    if (item.role !== 'user') return false;
+
+    const oldText = cleanText(
+      item.content ||
+      item.text ||
+      (Array.isArray(item.parts) ? item.parts[0]?.text : ''),
+      2000
+    ).toLowerCase();
+
+    return /સરકારી યોજના|સરકારની યોજના|પેન્શન|વૃદ્ધ પેન્શન|yojana|yojna|sarkari|pension|vruddh|old age pension/.test(oldText);
+  });
+
+  if (recentGovernmentContext) {
+    return 'government';
+  }
+
   return 'general';
 }
 
@@ -149,17 +173,90 @@ function getIntentInstruction(intent) {
   switch (intent) {
     case 'government':
       return `
-The user needs help with a government scheme or government benefit.
-Explain the topic in simple Gujarati.
-Do not invent eligibility rules, documents, deadlines or benefits.
-Clearly mention when current official verification is needed.
-Ask for the user's state or city only if it is necessary.
+GOVERNMENT SCHEME GUIDANCE:
+
+You are helping the user understand Indian government schemes,
+especially Gujarat government schemes.
+
+IMPORTANT RULES:
+
+1. Speak in simple, natural Gujarati when the user uses Gujarati
+   or Roman Gujarati.
+
+2. First understand which scheme the user wants information about.
+
+3. If the user asks about old-age pension or વૃદ્ધ પેન્શન,
+   explain that different schemes may exist.
+   Do not mix their eligibility rules or payment amounts.
+
+4. Ask only ONE question at a time.
+   Never show a long questionnaire.
+
+5. For an old-age pension eligibility check, collect relevant
+   information gradually. Possible questions include:
+   - Age of the applicant.
+   - State and district of residence.
+   - Rural or urban residence.
+   - Annual family income.
+   - BPL status, if relevant.
+   - Whether the applicant has a son aged 21 or above,
+     if this is relevant to the specific scheme.
+   - Duration of residence in Gujarat, if relevant.
+   - Disability status, only if relevant.
+
+6. Do not ask all these questions automatically.
+   Ask only the next useful question based on previous answers.
+
+7. Remember answers already given in the conversation.
+   Do not ask the same question again unnecessarily.
+
+8. Once enough information is available, explain:
+   - Which scheme may apply.
+   - Which eligibility conditions appear satisfied.
+   - Which conditions still need verification.
+   - Documents that may be required.
+   - Where and how to apply.
+   - Which official office or portal can help.
+
+9. Never guarantee that the user will receive a pension.
+   Only the relevant government authority can confirm final eligibility.
+
+10. NEVER invent:
+    - Eligibility conditions.
+    - Age limits.
+    - Income limits.
+    - Pension amounts.
+    - Required documents.
+    - Application deadlines.
+    - Government website links.
+
+11. Government rules and amounts can change.
+    Clearly tell the user when information needs confirmation
+    from an official government source.
+
+12. Never claim that you checked a live government website
+    unless an actual official-source check was performed.
+
+13. If exact current information is not available,
+    say so honestly and guide the user to the appropriate
+    government office or official portal.
+
+14. Keep the conversation friendly and practical.
+    Do not overwhelm the user with too much information.
+
+FIRST QUESTION FOR OLD-AGE PENSION:
+If the user has only asked about an old-age pension scheme
+and has not given their age, ask:
+"સૌ પ્રથમ તમારી ઉંમર કેટલી છે?"
+
+Continue one question at a time after that.
 `;
 
     case 'writing':
       return `
 The user needs help creating written content.
-Prepare the requested application, letter, quotation, email or other text.
+Prepare the requested application, letter, quotation,
+email or other text.
 Use a clean ready-to-copy format.
 Ask only for essential missing details.
 `;
@@ -308,8 +405,8 @@ app.post('/api/chat', requireFirebaseAuth, async (req, res) => {
     const history = makeHistory(req.body.history);
     const mood = detectMood(message);
 
-    // NEW: Identify what the user wants
-    const intent = detectIntent(message);
+    // Identify the user's current intent.
+    const intent = detectIntent(message, req.body.history);
     const intentInstruction = getIntentInstruction(intent);
 
     const contents = [
@@ -330,7 +427,7 @@ app.post('/api/chat', requireFirebaseAuth, async (req, res) => {
           generationConfig: {
             temperature: 0.8,
             topP: 0.9,
-            maxOutputTokens: 500
+            maxOutputTokens: 700
           }
         });
 
@@ -391,6 +488,7 @@ app.post('/api/chat', requireFirebaseAuth, async (req, res) => {
 app.listen(PORT, () => {
   console.log(`SWAYAM AI server running on port ${PORT}`);
 });
+
 
 
 
