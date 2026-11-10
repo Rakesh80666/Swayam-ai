@@ -231,9 +231,6 @@ function updateAvatar(mood = "neutral") {
     neutral: "🙂"
   };
 
-  const face = persona === "male"
-    ? maleFaces[mood] || "🙂"
-    : data.emoji;
 
   if (avatar) {
     if (persona === "female") {
