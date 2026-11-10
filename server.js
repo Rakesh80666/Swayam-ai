@@ -1,4 +1,5 @@
 
+
 import express from 'express';
 import dotenv from 'dotenv';
 import { GoogleGenerativeAI } from '@google/generative-ai';
@@ -46,10 +47,10 @@ const genAI = process.env.GEMINI_API_KEY
   ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
   : null;
 
-
 const modelNames = [
   'gemini-3.5-flash-lite'
 ];
+
 function requireFirebaseAuth(req, res, next) {
   if (!firebaseAuth) {
     return res.status(503).json({
@@ -111,12 +112,14 @@ function makeHistory(history) {
   if (!Array.isArray(history)) return [];
 
   return history.slice(-8).map(item => {
-    const role = item.role === 'assistant' || item.role === 'model'
-      ? 'model'
-      : 'user';
+    const role =
+      item.role === 'assistant' || item.role === 'model'
+        ? 'model'
+        : 'user';
 
     const text = cleanText(
-      item.content || item.text ||
+      item.content ||
+      item.text ||
       (Array.isArray(item.parts) ? item.parts[0]?.text : ''),
       2000
     );
@@ -143,6 +146,10 @@ Give clear and useful answers.
 Do not overwhelm the user with too many steps.
 Help people become confident and independent.
 Never pretend to be a human.
+
+Avoid repeating letters, words or phrases unnecessarily.
+Never produce meaningless repeated characters.
+Keep replies natural, relevant and concise.
 `;
 
 app.get('/api/health', (req, res) => {
@@ -183,52 +190,29 @@ app.post('/api/chat', requireFirebaseAuth, async (req, res) => {
     let lastError;
 
     for (const modelName of modelNames) {
-  try {
-    const model = genAI.getGenerativeModel({
-      model: modelName,
-      systemInstruction,
-      generationConfig: {
-        temperature: 0.8,
-        topP: 0.9,
-        maxOutputTokens: 500
-      }
-    });
+      try {
+        const model = genAI.getGenerativeModel({
+          model: modelName,
+          systemInstruction,
+          generationConfig: {
+            temperature: 0.8,
+            topP: 0.9,
+            maxOutputTokens: 500
+          }
+        });
 
-    const result = await model.generateContent({
-      contents
-    });
-
-    const reply = result.response.text();
-
-    if (!reply) {
-      throw new Error('Empty AI response');
-    }
-
-    return res.json({
-      reply,
-      mood,
-      model: modelName
-    });
-  systemInstruction,
-  generationConfig: {
-    temperature: 0.8,
-    topP: 0.9,
-    maxOutputTokens: 500
-  }
-});
-
-const result = await model.generateContent({
-  contents
-}); 
+        const result = await model.generateContent({
+          contents
+        });
 
         const reply = result.response.text();
 
-        if (!reply) {
+        if (!reply || !reply.trim()) {
           throw new Error('Empty AI response');
         }
 
         return res.json({
-          reply,
+          reply: reply.trim(),
           mood,
           model: modelName
         });
@@ -252,7 +236,10 @@ const result = await model.generateContent({
       }
     }
 
-    console.error('All Gemini models failed:', lastError?.message);
+    console.error(
+      'All Gemini models failed:',
+      lastError?.message
+    );
 
     return res.status(503).json({
       error: 'AI અત્યારે જવાબ આપી શકતું નથી. થોડી વાર પછી ફરી પ્રયાસ કરો.'
