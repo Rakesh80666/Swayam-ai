@@ -16,9 +16,7 @@
   text-align:center;
   padding:18px 12px;
 }
-.home-intro h2 {
-  margin:10px 0 5px;
-}
+.home-intro h2 { margin:10px 0 5px; }
 .home-intro p {
   color:#667085;
   margin:5px 0;
@@ -79,6 +77,14 @@
   width:52px;
   height:52px;
   font-size:29px;
+  overflow:hidden;
+  border-radius:50%;
+}
+.companion-small .avatar img {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:50%;
 }
 .companion-small h2 {
   font-size:16px;
@@ -120,18 +126,11 @@
   font-weight:600;
   cursor:pointer;
 }
-.app-section {
-  display:none;
-}
-.app-section.active {
-  display:block;
-}
-.music-card {
-  padding:16px;
-}
-.music-card h2 {
-  margin-top:0;
-}
+.app-section { display:none; }
+.app-section.active { display:block; }
+
+.music-card { padding:16px; }
+.music-card h2 { margin-top:0; }
 .music-intro {
   color:#667085;
   font-size:14px;
@@ -153,9 +152,7 @@
   font-size:14px;
   cursor:pointer;
 }
-.music-category button:active {
-  background:#dce6fa;
-}
+.music-category button:active { background:#dce6fa; }
 .music-heading {
   margin:20px 0 8px;
   font-size:16px;
@@ -171,9 +168,7 @@
   padding:15px;
   margin-top:15px;
 }
-.player-box h3 {
-  margin:0 0 10px;
-}
+.player-box h3 { margin:0 0 10px; }
 .player-box audio {
   width:100%;
   margin:8px 0;
@@ -196,9 +191,7 @@
   display:inline-block;
   margin-top:8px;
 }
-#mp3Files {
-  display:none;
-}
+#mp3Files { display:none; }
 #mp3List {
   padding-left:20px;
   font-size:14px;
@@ -216,20 +209,147 @@
   text-align:center;
   line-height:1.7;
 }
-.feature-message .big-icon {
-  font-size:42px;
-}
+.feature-message .big-icon { font-size:42px; }
 .feature-message p {
   color:#667085;
   font-size:14px;
 }
+
+/* HUMAN AI VIDEO CALL SCREEN */
+.call-screen {
+  background:linear-gradient(160deg,#101b32,#263b65);
+  color:white;
+  border-radius:22px;
+  padding:15px;
+  overflow:hidden;
+  text-align:center;
+  min-height:540px;
+  display:flex;
+  flex-direction:column;
+}
+.call-top {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  padding:5px 2px 15px;
+}
+.call-top strong { font-size:15px; }
+.call-live {
+  font-size:12px;
+  color:#b8f3cf;
+}
+.call-person {
+  position:relative;
+  flex:1;
+  min-height:340px;
+  background:linear-gradient(145deg,#d9c2b4,#8c7181);
+  border-radius:18px;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.call-person img {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center top;
+  position:absolute;
+  inset:0;
+}
+.call-person::after {
+  content:"";
+  position:absolute;
+  inset:55% 0 0;
+  background:linear-gradient(transparent,rgba(10,15,30,.25));
+  pointer-events:none;
+}
+.call-person.speaking img {
+  animation:avatarTalk 1.1s ease-in-out infinite;
+}
+@keyframes avatarTalk {
+  0%,100% { transform:scale(1); }
+  50% { transform:scale(1.012); }
+}
+.call-caption {
+  position:absolute;
+  z-index:2;
+  bottom:15px;
+  left:10px;
+  right:10px;
+  padding:9px;
+  border-radius:12px;
+  background:rgba(10,15,30,.55);
+  font-size:13px;
+}
+.call-status {
+  min-height:24px;
+  padding:12px 5px 5px;
+  font-size:13px;
+  color:#e2eafa;
+}
+.call-controls {
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:15px;
+  padding:12px 5px 8px;
+}
+.call-control {
+  width:56px;
+  height:56px;
+  border:0;
+  border-radius:50%;
+  background:#425779;
+  color:white;
+  font-size:22px;
+  cursor:pointer;
+}
+.call-control.end {
+  background:#d83d4e;
+}
+.call-control:active { transform:scale(.94); }
+.call-help {
+  font-size:11px;
+  color:#d1d9e8;
+  line-height:1.5;
+  padding:4px 8px 10px;
+}
+.call-transcript {
+  margin-top:12px;
+  padding:12px;
+  border-radius:12px;
+  background:#f0f4fb;
+  color:#243653;
+  text-align:left;
+  font-size:13px;
+  line-height:1.6;
+  min-height:42px;
+}
+.call-transcript strong {
+  display:block;
+  margin-bottom:4px;
+}
+.call-start {
+  width:100%;
+  border:0;
+  border-radius:13px;
+  padding:14px;
+  background:#315b9c;
+  color:white;
+  font-size:15px;
+  font-weight:600;
+  margin-top:12px;
+  cursor:pointer;
+}
+.call-start:active { opacity:.85; }
+
 @media(max-width:360px) {
-  .music-category {
-    grid-template-columns:1fr;
-  }
-  .menu-item {
-    padding:17px 8px;
-  }
+  .music-category { grid-template-columns:1fr; }
+  .menu-item { padding:17px 8px; }
+  .call-controls { gap:9px; }
+  .call-control { width:50px;height:50px; }
 }
 </style>
 </head>
@@ -246,28 +366,20 @@
   <span id="status" class="status">SWAYAM AI તૈયાર છે.</span>
 </header>
 
-<!-- LOGIN AND SIGNUP -->
+<!-- LOGIN -->
 <section class="auth card" id="authPanel">
   <h2>SWAYAM AIમાં સ્વાગત છે</h2>
-
   <p>
     તમારી પોતાની AI મિત્ર સાથે વાત કરવા માટે
     લોગિન કરો અથવા નવું ખાતું બનાવો.
   </p>
 
-  <input
-    id="email"
-    type="email"
-    autocomplete="email"
-    placeholder="તમારું ઇમેઇલ લખો"
-  >
+  <input id="email" type="email" autocomplete="email"
+    placeholder="તમારું ઇમેઇલ લખો">
 
-  <input
-    id="password"
-    type="password"
+  <input id="password" type="password"
     autocomplete="current-password"
-    placeholder="પાસવર્ડ (ઓછામાં ઓછા 6 અક્ષર)"
-  >
+    placeholder="પાસવર્ડ (ઓછામાં ઓછા 6 અક્ષર)">
 
   <div class="actions">
     <button id="loginBtn">લોગિન કરો</button>
@@ -290,13 +402,12 @@
 <!-- MAIN APP -->
 <section id="chatPanel" class="hidden">
 
-  <!-- SMALL AI COMPANION -->
   <div class="companion-small">
-
     <div class="avatarwrap">
-    <div class="avatar" id="avatar">
-  <img src="./file_00000000debc82119f61e08c4f8d90f6.png" alt="SWAYAM AI મહિલા મિત્ર">
-</div>
+      <div class="avatar" id="avatar">
+        <img src="./file_00000000debc82119f61e08c4f8d90f6.png"
+          alt="SWAYAM AI મહિલા મિત્ર">
+      </div>
       <div class="pulse"></div>
     </div>
 
@@ -310,21 +421,16 @@
     </div>
 
     <div class="companion-actions">
-      <button id="logoutBtn" class="textbtn">
-        લોગઆઉટ
-      </button>
+      <button id="logoutBtn" class="textbtn">લોગઆઉટ</button>
     </div>
-
   </div>
 
-  <!-- HOME SCREEN -->
+  <!-- HOME -->
   <section id="homeSection" class="app-section active">
 
     <div class="home-intro card">
       <h2>નમસ્તે! SWAYAM AIમાં તમારું સ્વાગત છે 👋</h2>
-
       <p>આજે આપણે શું કામ કરીએ?</p>
-
       <p>
         તમારી જરૂરિયાત પસંદ કરો.
         હું તમારી સાથે રહીને મદદ કરીશ.
@@ -332,11 +438,16 @@
     </div>
 
     <div class="main-menu">
-
       <button class="menu-item" data-open="chatSection">
         <span class="menu-icon">💬</span>
         <strong>Chat</strong>
         <small>મારી સાથે વાત કરો</small>
+      </button>
+
+      <button class="menu-item" data-open="callSection">
+        <span class="menu-icon">📹</span>
+        <strong>Human AI Call</strong>
+        <small>મારી સાથે બોલીને વાત કરો</small>
       </button>
 
       <button class="menu-item" data-open="infoSection">
@@ -356,20 +467,17 @@
         <strong>Map</strong>
         <small>સ્થળો અને રસ્તા વિશે જાણો</small>
       </button>
-
     </div>
   </section>
 
-  <!-- CHAT SECTION -->
+  <!-- CHAT -->
   <section id="chatSection" class="app-section">
-
     <div class="section-heading">
       <h2>💬 Chat</h2>
       <button class="home-btn" data-home>↩ Home</button>
     </div>
 
     <div class="card chatcard">
-
       <div id="messages" class="messages">
         <div class="bubble bot">
           નમસ્તે! આજે આપણે શું વાત કરીએ?
@@ -378,126 +486,141 @@
       </div>
 
       <div class="composer">
-
-        <button
-          id="micBtn"
-          class="round"
-          title="બોલીને લખો"
-        >
-          🎙️
-        </button>
-
-        <input
-          id="message"
-          placeholder="અહીં લખો..."
-          autocomplete="off"
-        >
-
-        <button id="sendBtn" class="send">
-          મોકલો
-        </button>
-
+        <button id="micBtn" class="round" title="બોલીને લખો">🎙️</button>
+        <input id="message" placeholder="અહીં લખો..." autocomplete="off">
+        <button id="sendBtn" class="send">મોકલો</button>
       </div>
 
       <div class="tools">
-
         <button id="speakToggle" class="small secondary">
           🔊 અવાજ ચાલુ/બંધ
         </button>
-
         <button id="clearBtn" class="small secondary">
           ચેટ સાફ કરો
         </button>
-
       </div>
 
+      <button class="call-start" data-open="callSection">
+        📹 Human AI સાથે વાત કરો
+      </button>
     </div>
   </section>
 
-  <!-- INFORMATION SECTION -->
-  <section id="infoSection" class="app-section">
+  <!-- HUMAN AI CALL -->
+  <section id="callSection" class="app-section">
+    <div class="section-heading">
+      <h2>📹 Human AI Call</h2>
+      <button class="home-btn" data-home>↩ Home</button>
+    </div>
 
+    <div class="call-screen">
+      <div class="call-top">
+        <strong>SWAYAM AI મિત્ર</strong>
+        <span class="call-live">● તમારી AI સાથી</span>
+      </div>
+
+      <div class="call-person" id="callAvatar">
+        <img
+          src="./file_00000000debc82119f61e08c4f8d90f6.png"
+          alt="SWAYAM AI મહિલા મિત્ર">
+        <div class="call-caption">
+          નમસ્તે! હું તમારી સાથે વાત કરવા તૈયાર છું. 💜
+        </div>
+      </div>
+
+      <div class="call-status" id="callStatus">
+        વાત શરૂ કરવા માઇક્રોફોન બટન દબાવો.
+      </div>
+
+      <div class="call-controls">
+        <button id="callMicBtn" class="call-control"
+          type="button" title="બોલવાનું શરૂ કરો">🎙️</button>
+
+        <button id="callSpeakBtn" class="call-control"
+          type="button" title="અવાજ ચાલુ કે બંધ કરો">🔊</button>
+
+        <button id="endCallBtn" class="call-control end"
+          type="button" title="વાત બંધ કરો">✕</button>
+      </div>
+
+      <div class="call-help">
+        માઇક્રોફોન દબાવીને તમારી વાત બોલો.
+        AIનો જવાબ અવાજમાં સાંભળવા મળશે.
+      </div>
+    </div>
+
+    <div class="call-transcript" id="callTranscript">
+      <strong>તમારી વાતચીત</strong>
+      <span id="callTranscriptText">
+        અહીં તમારી વાત અને AIનો જવાબ દેખાશે.
+      </span>
+    </div>
+
+    <button class="call-start" data-open="chatSection">
+      💬 લખીને વાત કરવા Chat ખોલો
+    </button>
+  </section>
+
+  <!-- INFORMATION -->
+  <section id="infoSection" class="app-section">
     <div class="section-heading">
       <h2>📚 માહિતી અને માર્ગદર્શન</h2>
       <button class="home-btn" data-home>↩ Home</button>
     </div>
 
     <div class="card feature-message">
-
       <div class="big-icon">💡</div>
-
       <h2>તમને કઈ માહિતી જોઈએ છે?</h2>
-
       <p>
         સરકારી યોજનાઓ, રોજગાર, વ્યવસાય,
         શિક્ષણ, શિષ્યવૃત્તિ, ટેકનોલોજી
         અને રોજિંદા જીવનની જરૂરી માહિતી
         SWAYAM AI પાસેથી મેળવી શકો છો.
       </p>
-
-      <button id="infoChatBtn">
-        AI સાથે વાત કરો
-      </button>
-
+      <button id="infoChatBtn">AI સાથે વાત કરો</button>
     </div>
   </section>
 
-  <!-- MUSIC SECTION -->
+  <!-- MUSIC -->
   <section id="musicSection" class="app-section">
-
     <div class="section-heading">
       <h2>🎵 SWAYAM MUSIC</h2>
       <button class="home-btn" data-home>↩ Home</button>
     </div>
 
     <div class="card music-card">
-
       <p class="music-intro">
         તમારી પસંદગીનાં જૂનાં, નવાં અને મનપસંદ ગીતો
         સાંભળવા માટે સંગીતની શ્રેણી પસંદ કરો.
       </p>
 
-      <h3 class="music-heading">
-        🎼 જૂનાં યાદગાર ગીતો
-      </h3>
-
+      <h3 class="music-heading">🎼 જૂનાં યાદગાર ગીતો</h3>
       <div class="music-category">
-
         <button>🎙️ 1950નાં ગીતો</button>
         <button>🎙️ 1960નાં ગીતો</button>
         <button>🎙️ 1970નાં ગીતો</button>
         <button>🎵 1980નાં ગીતો</button>
         <button>🎵 1990નાં ગીતો</button>
         <button>🎵 2000 પછીનાં ગીતો</button>
-
       </div>
 
-      <h3 class="music-heading">
-        💜 ગુજરાતી અને ભારતીય સંગીત
-      </h3>
-
+      <h3 class="music-heading">💜 ગુજરાતી અને ભારતીય સંગીત</h3>
       <div class="music-category">
-
         <button>🎶 જૂનાં ગુજરાતી ગીતો</button>
         <button>🎶 નવાં ગુજરાતી ગીતો</button>
         <button>💃 ગુજરાતી ગરબા</button>
         <button>🙏 ભજન અને આરતી</button>
         <button>🎼 શાસ્ત્રીય સંગીત</button>
         <button>🎙️ ગઝલ</button>
-
       </div>
 
-      <h3 class="music-heading">
-        🌿 Relaxation &amp; Wellness Music
-      </h3>
-
+      <h3 class="music-heading">🌿 Relaxation &amp; Wellness Music</h3>
       <p class="music-intro">
         આરામ અને શાંતિ માટે હળવું સંગીત
         અને કુદરતી અવાજો સાંભળો.
       </p>
 
       <div class="music-category">
-
         <button>🌿 Relaxing Music</button>
         <button>🧘 Meditation Music</button>
         <button>🌙 Sleep Music</button>
@@ -506,14 +629,10 @@
         <button>🌊 Nature Sounds</button>
         <button>🎹 Piano Music</button>
         <button>🪈 વાંસળીનું સંગીત</button>
-
       </div>
 
-      <!-- LOCAL MP3 PLAYER -->
       <div class="player-box">
-
         <h3>🎧 My MP3 Player</h3>
-
         <p class="music-intro">
           તમારા મોબાઇલમાં રહેલાં MP3 ગીતો પસંદ કરીને
           અહીં સાંભળી શકો છો.
@@ -523,12 +642,7 @@
           📂 મોબાઇલમાંથી MP3 પસંદ કરો
         </label>
 
-        <input
-          id="mp3Files"
-          type="file"
-          accept="audio/*"
-          multiple
-        >
+        <input id="mp3Files" type="file" accept="audio/*" multiple>
 
         <p id="mp3Status" class="music-intro">
           અહીંથી કોઈ ગીત પસંદ કરો.
@@ -542,9 +656,7 @@
         </div>
 
         <h3 class="music-heading">ગીતોની યાદી</h3>
-
         <ol id="mp3List"></ol>
-
       </div>
 
       <p class="music-note">
@@ -552,34 +664,27 @@
         વગાડવા માટે છે. Relaxation Music આરામ અને
         મનની શાંતિ માટેનું સંગીત છે.
       </p>
-
     </div>
   </section>
 
-  <!-- MAP SECTION -->
+  <!-- MAP -->
   <section id="mapSection" class="app-section">
-
     <div class="section-heading">
       <h2>🗺️ Map અને માર્ગદર્શન</h2>
       <button class="home-btn" data-home>↩ Home</button>
     </div>
 
     <div class="card feature-message">
-
       <div class="big-icon">📍</div>
-
       <h2>તમારે ક્યાં જવું છે?</h2>
-
       <p>
         નજીકનાં સ્થળો, સરનામાં અને સરળ રસ્તા વિશે
         માહિતી મેળવવા માટે SWAYAM AI તમને મદદ કરશે.
       </p>
-
       <p>
         તમે જે સ્થળે જવા માંગો છો તેનું નામ લખીને
         અથવા બોલીને પૂછી શકો છો.
       </p>
-
     </div>
   </section>
 
@@ -594,10 +699,8 @@
 
 </main>
 
-<div
-  id="voiceInfo"
-  style="font-size:13px;padding:10px;margin:10px;color:#555;"
->
+<div id="voiceInfo"
+  style="font-size:13px;padding:10px;margin:10px;color:#555;">
   અવાજની સુવિધા તૈયાર થઈ રહી છે...
 </div>
 
@@ -605,168 +708,119 @@
 
 <script>
 (function () {
-
   const sections = document.querySelectorAll(".app-section");
 
   function showSection(id) {
-
-    sections.forEach(section => {
-      section.classList.remove("active");
-    });
+    sections.forEach(section => section.classList.remove("active"));
 
     const selected = document.getElementById(id);
+    if (selected) selected.classList.add("active");
 
-    if (selected) {
-      selected.classList.add("active");
-    }
-
-    window.scrollTo({
-      top:0,
-      behavior:"smooth"
-    });
+    window.scrollTo({ top:0, behavior:"smooth" });
   }
 
   document.querySelectorAll("[data-open]").forEach(button => {
-
     button.addEventListener("click", () => {
       showSection(button.getAttribute("data-open"));
     });
-
   });
 
   document.querySelectorAll("[data-home]").forEach(button => {
-
     button.addEventListener("click", () => {
       showSection("homeSection");
     });
-
   });
 
-  document.getElementById("infoChatBtn").addEventListener("click", function() {
+  const infoChatBtn = document.getElementById("infoChatBtn");
+  if (infoChatBtn) {
+    infoChatBtn.addEventListener("click", function() {
+      showSection("chatSection");
+      document.getElementById("message")?.focus();
+    });
+  }
 
-    showSection("chatSection");
-
-    document.getElementById("message").focus();
-
-  });
-
+  window.swayamShowSection = showSection;
 })();
 
-
 /* LOCAL MP3 PLAYER */
-
 (function () {
-
   const fileInput = document.getElementById("mp3Files");
   const audio = document.getElementById("mp3Audio");
   const list = document.getElementById("mp3List");
   const status = document.getElementById("mp3Status");
+
+  if (!fileInput || !audio || !list || !status) return;
 
   let tracks = [];
   let currentTrack = 0;
   let currentUrl = null;
 
   function playTrack(index) {
-
     if (!tracks.length) return;
 
     currentTrack = (index + tracks.length) % tracks.length;
 
-    if (currentUrl) {
-      URL.revokeObjectURL(currentUrl);
-    }
+    if (currentUrl) URL.revokeObjectURL(currentUrl);
 
     currentUrl = URL.createObjectURL(tracks[currentTrack]);
-
     audio.src = currentUrl;
 
     audio.play().catch(() => {
-      status.textContent =
-        "ગીત વગાડવા માટે Play દબાવો.";
+      status.textContent = "ગીત વગાડવા માટે Play દબાવો.";
     });
 
-    status.textContent =
-      "ચાલુ ગીત: " + tracks[currentTrack].name;
-
+    status.textContent = "ચાલુ ગીત: " + tracks[currentTrack].name;
     renderList();
-
   }
 
   function renderList() {
-
     list.innerHTML = "";
 
     tracks.forEach((file, index) => {
-
       const item = document.createElement("li");
-
       item.textContent = file.name;
 
-      if (index === currentTrack) {
-        item.classList.add("selected");
-      }
+      if (index === currentTrack) item.classList.add("selected");
 
-      item.addEventListener("click", () => {
-        playTrack(index);
-      });
-
+      item.addEventListener("click", () => playTrack(index));
       list.appendChild(item);
-
     });
-
   }
 
   fileInput.addEventListener("change", function() {
-
     tracks = Array.from(fileInput.files || []);
-
     currentTrack = 0;
 
     if (!tracks.length) {
-
-      status.textContent =
-        "કોઈ ગીત પસંદ કરવામાં આવ્યું નથી.";
-
+      status.textContent = "કોઈ ગીત પસંદ કરવામાં આવ્યું નથી.";
       return;
     }
 
-    status.textContent =
-      tracks.length + " ગીત પસંદ કરવામાં આવ્યાં.";
-
+    status.textContent = tracks.length + " ગીત પસંદ કરવામાં આવ્યાં.";
     renderList();
-
     playTrack(0);
-
   });
 
-  document.getElementById("mp3Prev").addEventListener("click", () => {
+  document.getElementById("mp3Prev")?.addEventListener("click", () => {
     playTrack(currentTrack - 1);
   });
 
-  document.getElementById("mp3Next").addEventListener("click", () => {
+  document.getElementById("mp3Next")?.addEventListener("click", () => {
     playTrack(currentTrack + 1);
   });
 
   audio.addEventListener("ended", function() {
-
-    if (tracks.length > 1) {
-      playTrack(currentTrack + 1);
-    }
-
+    if (tracks.length > 1) playTrack(currentTrack + 1);
   });
 
   window.addEventListener("beforeunload", function() {
-
-    if (currentUrl) {
-      URL.revokeObjectURL(currentUrl);
-    }
-
+    if (currentUrl) URL.revokeObjectURL(currentUrl);
   });
-
 })();
 </script>
 
 </body>
 </html>
+
 
 
