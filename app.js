@@ -64,7 +64,7 @@ let selectedLanguage = "auto";
 let speakEnabled = true;
 let callActive = false;
 let recognition = null;
-
+let recognitionAvailable = false;
 const moods = {
   happy: ["#fff0c2", "😊", "આજે તમારો ઉત્સાહ સરસ છે!"],
   sad: ["#dce8f7", "🥺", "હું અહીં છું, તમારી વાત સાંભળું છું."],
