@@ -567,7 +567,6 @@ async function sendMessage() {
 
     if (sendBtn) sendBtn.disabled = false;
 
-    messageInput?.focus();
   }
 }
 
