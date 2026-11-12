@@ -1,5 +1,4 @@
 
-
 <!doctype html>
 <html lang="gu">
 <head>
@@ -11,17 +10,22 @@
 <link rel="stylesheet" href="/style.css">
 <title>SWAYAM AI</title>
 
+<!-- Talking Avatar library -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.186.0/build/three.module.js",
+    "three/examples/jsm/": "https://cdn.jsdelivr.net/npm/three@0.186.0/examples/jsm/",
+    "@interviewflowai/talking-avatar": "https://cdn.jsdelivr.net/npm/@interviewflowai/talking-avatar@0.3.0/dist/index.js"
+  }
+}
+</script>
+
 <style>
-.home-intro {
-  text-align:center;
-  padding:18px 12px;
-}
+.home-intro { text-align:center; padding:18px 12px; }
 .home-intro h2 { margin:10px 0 5px; }
-.home-intro p {
-  color:#667085;
-  margin:5px 0;
-  font-size:14px;
-}
+.home-intro p { color:#667085; margin:5px 0; font-size:14px; }
+
 .main-menu {
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
@@ -38,25 +42,11 @@
   cursor:pointer;
   box-shadow:0 4px 14px rgba(30,50,90,.06);
 }
-.menu-item:active {
-  transform:scale(.98);
-  background:#eef3ff;
-}
-.menu-icon {
-  display:block;
-  font-size:32px;
-  margin-bottom:8px;
-}
-.menu-item strong {
-  display:block;
-  font-size:16px;
-}
-.menu-item small {
-  display:block;
-  margin-top:5px;
-  color:#758096;
-  font-size:12px;
-}
+.menu-item:active { transform:scale(.98); background:#eef3ff; }
+.menu-icon { display:block; font-size:32px; margin-bottom:8px; }
+.menu-item strong { display:block; font-size:16px; }
+.menu-item small { display:block; margin-top:5px; color:#758096; font-size:12px; }
+
 .companion-small {
   display:flex;
   align-items:center;
@@ -68,204 +58,110 @@
   color:white;
 }
 .companion-small .avatarwrap {
-  width:58px;
-  height:58px;
-  min-width:58px;
-  margin:0;
+  width:58px; height:58px; min-width:58px; margin:0;
 }
 .companion-small .avatar {
-  width:52px;
-  height:52px;
-  font-size:29px;
-  overflow:hidden;
-  border-radius:50%;
+  width:52px; height:52px; font-size:29px;
+  overflow:hidden; border-radius:50%;
 }
 .companion-small .avatar img {
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  border-radius:50%;
+  width:100%; height:100%; object-fit:cover; border-radius:50%;
 }
-.companion-small h2 {
-  font-size:16px;
-  margin:0 0 4px;
-  color:white;
-}
-.companion-small p {
-  font-size:12px;
-  margin:0;
-  color:#e0e9f7;
-}
+.companion-small h2 { font-size:16px; margin:0 0 4px; color:white; }
+.companion-small p { font-size:12px; margin:0; color:#e0e9f7; }
 .companion-small .companion-actions {
-  margin-left:auto;
-  display:flex;
-  flex-direction:column;
-  gap:5px;
+  margin-left:auto; display:flex; flex-direction:column; gap:5px;
 }
-.companion-small .textbtn {
-  color:white;
-  font-size:12px;
-}
+.companion-small .textbtn { color:white; font-size:12px; }
+
 .section-heading {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  margin:12px 0;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:10px; margin:12px 0;
 }
-.section-heading h2 {
-  margin:0;
-  font-size:20px;
-}
+.section-heading h2 { margin:0; font-size:20px; }
 .home-btn {
-  border:0;
-  border-radius:10px;
-  background:#e9eef8;
-  color:#263b65;
-  padding:10px 14px;
-  font-weight:600;
-  cursor:pointer;
+  border:0; border-radius:10px; background:#e9eef8;
+  color:#263b65; padding:10px 14px; font-weight:600; cursor:pointer;
 }
 .app-section { display:none; }
 .app-section.active { display:block; }
 
 .music-card { padding:16px; }
 .music-card h2 { margin-top:0; }
-.music-intro {
-  color:#667085;
-  font-size:14px;
-}
+.music-intro { color:#667085; font-size:14px; }
 .music-category {
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:9px;
-  margin-top:12px;
+  gap:9px; margin-top:12px;
 }
 .music-category button {
-  border:0;
-  border-radius:11px;
-  padding:13px 10px;
-  background:#eef2fa;
-  color:#243653;
-  text-align:left;
-  min-height:54px;
-  font-size:14px;
-  cursor:pointer;
+  border:0; border-radius:11px; padding:13px 10px;
+  background:#eef2fa; color:#243653; text-align:left;
+  min-height:54px; font-size:14px; cursor:pointer;
 }
 .music-category button:active { background:#dce6fa; }
-.music-heading {
-  margin:20px 0 8px;
-  font-size:16px;
-}
-.music-note {
-  font-size:12px;
-  color:#777;
-  margin-top:15px;
-}
+.music-heading { margin:20px 0 8px; font-size:16px; }
+.music-note { font-size:12px; color:#777; margin-top:15px; }
 .player-box {
-  background:#f0f4fb;
-  border-radius:15px;
-  padding:15px;
-  margin-top:15px;
+  background:#f0f4fb; border-radius:15px; padding:15px; margin-top:15px;
 }
 .player-box h3 { margin:0 0 10px; }
-.player-box audio {
-  width:100%;
-  margin:8px 0;
+.player-box audio { width:100%; margin:8px 0; }
+.player-controls { display:flex; gap:8px; margin-top:10px; }
+.player-controls button, .file-button {
+  border:0; border-radius:10px; padding:11px 14px;
+  background:#263b65; color:white; cursor:pointer;
 }
-.player-controls {
-  display:flex;
-  gap:8px;
-  margin-top:10px;
-}
-.player-controls button,
-.file-button {
-  border:0;
-  border-radius:10px;
-  padding:11px 14px;
-  background:#263b65;
-  color:white;
-  cursor:pointer;
-}
-.file-button {
-  display:inline-block;
-  margin-top:8px;
-}
+.file-button { display:inline-block; margin-top:8px; }
 #mp3Files { display:none; }
-#mp3List {
-  padding-left:20px;
-  font-size:14px;
-}
-#mp3List li {
-  padding:7px 3px;
-  cursor:pointer;
-}
-#mp3List li.selected {
-  color:#2456a6;
-  font-weight:bold;
-}
-.feature-message {
-  padding:20px;
-  text-align:center;
-  line-height:1.7;
-}
-.feature-message .big-icon { font-size:42px; }
-.feature-message p {
-  color:#667085;
-  font-size:14px;
-}
+#mp3List { padding-left:20px; font-size:14px; }
+#mp3List li { padding:7px 3px; cursor:pointer; }
+#mp3List li.selected { color:#2456a6; font-weight:bold; }
 
-/* HUMAN AI VIDEO CALL SCREEN */
+.feature-message { padding:20px; text-align:center; line-height:1.7; }
+.feature-message .big-icon { font-size:42px; }
+.feature-message p { color:#667085; font-size:14px; }
+
+/* HUMAN AI VIDEO CALL */
 .call-screen {
   background:linear-gradient(160deg,#101b32,#263b65);
-  color:white;
-  border-radius:22px;
-  padding:15px;
-  overflow:hidden;
-  text-align:center;
-  min-height:540px;
-  display:flex;
-  flex-direction:column;
+  color:white; border-radius:22px; padding:15px;
+  overflow:hidden; text-align:center; min-height:540px;
+  display:flex; flex-direction:column;
 }
 .call-top {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:8px;
-  padding:5px 2px 15px;
+  display:flex; justify-content:space-between; align-items:center;
+  gap:8px; padding:5px 2px 15px;
 }
 .call-top strong { font-size:15px; }
-.call-live {
-  font-size:12px;
-  color:#b8f3cf;
-}
+.call-live { font-size:12px; color:#b8f3cf; }
+
 .call-person {
-  position:relative;
-  flex:1;
-  min-height:340px;
+  position:relative; flex:1; min-height:340px;
   background:linear-gradient(145deg,#d9c2b4,#8c7181);
-  border-radius:18px;
-  overflow:hidden;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  border-radius:18px; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
 }
-.call-person img {
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  object-position:center top;
+
+/* Talking Avatar container */
+#talkingAvatarMount {
   position:absolute;
   inset:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+}
+#talkingAvatarMount canvas {
+  display:block;
+  width:100% !important;
+  height:100% !important;
 }
 .call-person::after {
-  content:"";
-  position:absolute;
-  inset:55% 0 0;
+  content:""; position:absolute; inset:55% 0 0;
   background:linear-gradient(transparent,rgba(10,15,30,.25));
-  pointer-events:none;
+  pointer-events:none; z-index:1;
 }
-.call-person.speaking img {
+.call-person.speaking #talkingAvatarMount {
   animation:avatarTalk 1.1s ease-in-out infinite;
 }
 @keyframes avatarTalk {
@@ -273,75 +169,39 @@
   50% { transform:scale(1.012); }
 }
 .call-caption {
-  position:absolute;
-  z-index:2;
-  bottom:15px;
-  left:10px;
-  right:10px;
-  padding:9px;
-  border-radius:12px;
-  background:rgba(10,15,30,.55);
+  position:absolute; z-index:2; bottom:15px;
+  left:10px; right:10px; padding:9px;
+  border-radius:12px; background:rgba(10,15,30,.55);
   font-size:13px;
 }
 .call-status {
-  min-height:24px;
-  padding:12px 5px 5px;
-  font-size:13px;
-  color:#e2eafa;
+  min-height:24px; padding:12px 5px 5px;
+  font-size:13px; color:#e2eafa;
 }
 .call-controls {
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:15px;
-  padding:12px 5px 8px;
+  display:flex; justify-content:center; align-items:center;
+  gap:15px; padding:12px 5px 8px;
 }
 .call-control {
-  width:56px;
-  height:56px;
-  border:0;
-  border-radius:50%;
-  background:#425779;
-  color:white;
-  font-size:22px;
-  cursor:pointer;
+  width:56px; height:56px; border:0; border-radius:50%;
+  background:#425779; color:white; font-size:22px; cursor:pointer;
 }
-.call-control.end {
-  background:#d83d4e;
-}
+.call-control.end { background:#d83d4e; }
 .call-control:active { transform:scale(.94); }
 .call-help {
-  font-size:11px;
-  color:#d1d9e8;
-  line-height:1.5;
+  font-size:11px; color:#d1d9e8; line-height:1.5;
   padding:4px 8px 10px;
 }
 .call-transcript {
-  margin-top:12px;
-  padding:12px;
-  border-radius:12px;
-  background:#f0f4fb;
-  color:#243653;
-  text-align:left;
-  font-size:13px;
-  line-height:1.6;
-  min-height:42px;
+  margin-top:12px; padding:12px; border-radius:12px;
+  background:#f0f4fb; color:#243653; text-align:left;
+  font-size:13px; line-height:1.6; min-height:42px;
 }
-.call-transcript strong {
-  display:block;
-  margin-bottom:4px;
-}
+.call-transcript strong { display:block; margin-bottom:4px; }
 .call-start {
-  width:100%;
-  border:0;
-  border-radius:13px;
-  padding:14px;
-  background:#315b9c;
-  color:white;
-  font-size:15px;
-  font-weight:600;
-  margin-top:12px;
-  cursor:pointer;
+  width:100%; border:0; border-radius:13px; padding:14px;
+  background:#315b9c; color:white; font-size:15px;
+  font-weight:600; margin-top:12px; cursor:pointer;
 }
 .call-start:active { opacity:.85; }
 
@@ -349,7 +209,7 @@
   .music-category { grid-template-columns:1fr; }
   .menu-item { padding:17px 8px; }
   .call-controls { gap:9px; }
-  .call-control { width:50px;height:50px; }
+  .call-control { width:50px; height:50px; }
 }
 </style>
 </head>
@@ -369,16 +229,10 @@
 <!-- LOGIN -->
 <section class="auth card" id="authPanel">
   <h2>SWAYAM AIમાં સ્વાગત છે</h2>
-  <p>
-    તમારી પોતાની AI મિત્ર સાથે વાત કરવા માટે
-    લોગિન કરો અથવા નવું ખાતું બનાવો.
-  </p>
+  <p>તમારી પોતાની AI મિત્ર સાથે વાત કરવા માટે લોગિન કરો અથવા નવું ખાતું બનાવો.</p>
 
-  <input id="email" type="email" autocomplete="email"
-    placeholder="તમારું ઇમેઇલ લખો">
-
-  <input id="password" type="password"
-    autocomplete="current-password"
+  <input id="email" type="email" autocomplete="email" placeholder="તમારું ઇમેઇલ લખો">
+  <input id="password" type="password" autocomplete="current-password"
     placeholder="પાસવર્ડ (ઓછામાં ઓછા 6 અક્ષર)">
 
   <div class="actions">
@@ -386,17 +240,9 @@
     <button id="signupBtn" class="secondary">નવું ખાતું બનાવો</button>
   </div>
 
-  <button id="googleBtn" class="google secondary">
-    Google દ્વારા લોગિન કરો
-  </button>
-
-  <button id="resetBtn" class="secondary">
-    પાસવર્ડ ભૂલી ગયા છો?
-  </button>
-
-  <p id="authMsg" class="hint">
-    લોગિન કરો અથવા નવું ખાતું બનાવો.
-  </p>
+  <button id="googleBtn" class="google secondary">Google દ્વારા લોગિન કરો</button>
+  <button id="resetBtn" class="secondary">પાસવર્ડ ભૂલી ગયા છો?</button>
+  <p id="authMsg" class="hint">લોગિન કરો અથવા નવું ખાતું બનાવો.</p>
 </section>
 
 <!-- MAIN APP -->
@@ -410,16 +256,11 @@
       </div>
       <div class="pulse"></div>
     </div>
-
     <div>
       <h2 id="greeting">હું તમારી સાથે છું 😊</h2>
-      <p id="moodLine">
-        આજે તમારા મનમાં શું ચાલી રહ્યું છે?
-        નિઃસંકોચ વાત કરો.
-      </p>
+      <p id="moodLine">આજે તમારા મનમાં શું ચાલી રહ્યું છે? નિઃસંકોચ વાત કરો.</p>
       <div id="reaction" class="reaction">💜</div>
     </div>
-
     <div class="companion-actions">
       <button id="logoutBtn" class="textbtn">લોગઆઉટ</button>
     </div>
@@ -427,44 +268,31 @@
 
   <!-- HOME -->
   <section id="homeSection" class="app-section active">
-
     <div class="home-intro card">
       <h2>નમસ્તે! SWAYAM AIમાં તમારું સ્વાગત છે 👋</h2>
       <p>આજે આપણે શું કામ કરીએ?</p>
-      <p>
-        તમારી જરૂરિયાત પસંદ કરો.
-        હું તમારી સાથે રહીને મદદ કરીશ.
-      </p>
+      <p>તમારી જરૂરિયાત પસંદ કરો. હું તમારી સાથે રહીને મદદ કરીશ.</p>
     </div>
 
     <div class="main-menu">
       <button class="menu-item" data-open="chatSection">
-        <span class="menu-icon">💬</span>
-        <strong>Chat</strong>
+        <span class="menu-icon">💬</span><strong>Chat</strong>
         <small>મારી સાથે વાત કરો</small>
       </button>
-
       <button class="menu-item" data-open="callSection">
-        <span class="menu-icon">📹</span>
-        <strong>Human AI Call</strong>
+        <span class="menu-icon">📹</span><strong>Human AI Call</strong>
         <small>મારી સાથે બોલીને વાત કરો</small>
       </button>
-
       <button class="menu-item" data-open="infoSection">
-        <span class="menu-icon">📚</span>
-        <strong>માહિતી</strong>
+        <span class="menu-icon">📚</span><strong>માહિતી</strong>
         <small>જાણકારી અને માર્ગદર્શન મેળવો</small>
       </button>
-
       <button class="menu-item" data-open="musicSection">
-        <span class="menu-icon">🎵</span>
-        <strong>Music</strong>
+        <span class="menu-icon">🎵</span><strong>Music</strong>
         <small>ગીતો અને સંગીત સાંભળો</small>
       </button>
-
       <button class="menu-item" data-open="mapSection">
-        <span class="menu-icon">🗺️</span>
-        <strong>Map</strong>
+        <span class="menu-icon">🗺️</span><strong>Map</strong>
         <small>સ્થળો અને રસ્તા વિશે જાણો</small>
       </button>
     </div>
@@ -476,33 +304,20 @@
       <h2>💬 Chat</h2>
       <button class="home-btn" data-home>↩ Home</button>
     </div>
-
     <div class="card chatcard">
       <div id="messages" class="messages">
-        <div class="bubble bot">
-          નમસ્તે! આજે આપણે શું વાત કરીએ?
-          હું તમારી સાથે છું. 💜
-        </div>
+        <div class="bubble bot">નમસ્તે! આજે આપણે શું વાત કરીએ? હું તમારી સાથે છું. 💜</div>
       </div>
-
       <div class="composer">
         <button id="micBtn" class="round" title="બોલીને લખો">🎙️</button>
         <input id="message" placeholder="અહીં લખો..." autocomplete="off">
         <button id="sendBtn" class="send">મોકલો</button>
       </div>
-
       <div class="tools">
-        <button id="speakToggle" class="small secondary">
-          🔊 અવાજ ચાલુ/બંધ
-        </button>
-        <button id="clearBtn" class="small secondary">
-          ચેટ સાફ કરો
-        </button>
+        <button id="speakToggle" class="small secondary">🔊 અવાજ ચાલુ/બંધ</button>
+        <button id="clearBtn" class="small secondary">ચેટ સાફ કરો</button>
       </div>
-
-      <button class="call-start" data-open="callSection">
-        📹 Human AI સાથે વાત કરો
-      </button>
+      <button class="call-start" data-open="callSection">📹 Human AI સાથે વાત કરો</button>
     </div>
   </section>
 
@@ -520,12 +335,8 @@
       </div>
 
       <div class="call-person" id="callAvatar">
-        <img
-          src="./file_00000000debc82119f61e08c4f8d90f6.png"
-          alt="SWAYAM AI મહિલા મિત્ર">
-        <div class="call-caption">
-          નમસ્તે! હું તમારી સાથે વાત કરવા તૈયાર છું. 💜
-        </div>
+        <div id="talkingAvatarMount"></div>
+        <div class="call-caption">નમસ્તે! હું તમારી સાથે વાત કરવા તૈયાર છું. 💜</div>
       </div>
 
       <div class="call-status" id="callStatus">
@@ -533,27 +344,22 @@
       </div>
 
       <div class="call-controls">
-        <button id="callMicBtn" class="call-control"
-          type="button" title="બોલવાનું શરૂ કરો">🎙️</button>
-
-        <button id="callSpeakBtn" class="call-control"
-          type="button" title="અવાજ ચાલુ કે બંધ કરો">🔊</button>
-
-        <button id="endCallBtn" class="call-control end"
-          type="button" title="વાત બંધ કરો">✕</button>
+        <button id="callMicBtn" class="call-control" type="button"
+          title="બોલવાનું શરૂ કરો">🎙️</button>
+        <button id="callSpeakBtn" class="call-control" type="button"
+          title="અવાજ ચાલુ કે બંધ કરો">🔊</button>
+        <button id="endCallBtn" class="call-control end" type="button"
+          title="વાત બંધ કરો">✕</button>
       </div>
 
       <div class="call-help">
-        માઇક્રોફોન દબાવીને તમારી વાત બોલો.
-        AIનો જવાબ અવાજમાં સાંભળવા મળશે.
+        માઇક્રોફોન દબાવીને તમારી વાત બોલો. AIનો જવાબ અવાજમાં સાંભળવા મળશે.
       </div>
     </div>
 
     <div class="call-transcript" id="callTranscript">
       <strong>તમારી વાતચીત</strong>
-      <span id="callTranscriptText">
-        અહીં તમારી વાત અને AIનો જવાબ દેખાશે.
-      </span>
+      <span id="callTranscriptText">અહીં તમારી વાત અને AIનો જવાબ દેખાશે.</span>
     </div>
 
     <button class="call-start" data-open="chatSection">
@@ -567,16 +373,10 @@
       <h2>📚 માહિતી અને માર્ગદર્શન</h2>
       <button class="home-btn" data-home>↩ Home</button>
     </div>
-
     <div class="card feature-message">
       <div class="big-icon">💡</div>
       <h2>તમને કઈ માહિતી જોઈએ છે?</h2>
-      <p>
-        સરકારી યોજનાઓ, રોજગાર, વ્યવસાય,
-        શિક્ષણ, શિષ્યવૃત્તિ, ટેકનોલોજી
-        અને રોજિંદા જીવનની જરૂરી માહિતી
-        SWAYAM AI પાસેથી મેળવી શકો છો.
-      </p>
+      <p>સરકારી યોજનાઓ, રોજગાર, વ્યવસાય, શિક્ષણ, શિષ્યવૃત્તિ, ટેકનોલોજી અને રોજિંદા જીવનની જરૂરી માહિતી SWAYAM AI પાસેથી મેળવી શકો છો.</p>
       <button id="infoChatBtn">AI સાથે વાત કરો</button>
     </div>
   </section>
@@ -589,10 +389,7 @@
     </div>
 
     <div class="card music-card">
-      <p class="music-intro">
-        તમારી પસંદગીનાં જૂનાં, નવાં અને મનપસંદ ગીતો
-        સાંભળવા માટે સંગીતની શ્રેણી પસંદ કરો.
-      </p>
+      <p class="music-intro">તમારી પસંદગીનાં જૂનાં, નવાં અને મનપસંદ ગીતો સાંભળવા માટે સંગીતની શ્રેણી પસંદ કરો.</p>
 
       <h3 class="music-heading">🎼 જૂનાં યાદગાર ગીતો</h3>
       <div class="music-category">
@@ -615,11 +412,7 @@
       </div>
 
       <h3 class="music-heading">🌿 Relaxation &amp; Wellness Music</h3>
-      <p class="music-intro">
-        આરામ અને શાંતિ માટે હળવું સંગીત
-        અને કુદરતી અવાજો સાંભળો.
-      </p>
-
+      <p class="music-intro">આરામ અને શાંતિ માટે હળવું સંગીત અને કુદરતી અવાજો સાંભળો.</p>
       <div class="music-category">
         <button>🌿 Relaxing Music</button>
         <button>🧘 Meditation Music</button>
@@ -633,194 +426,21 @@
 
       <div class="player-box">
         <h3>🎧 My MP3 Player</h3>
-        <p class="music-intro">
-          તમારા મોબાઇલમાં રહેલાં MP3 ગીતો પસંદ કરીને
-          અહીં સાંભળી શકો છો.
-        </p>
-
-        <label for="mp3Files" class="file-button">
-          📂 મોબાઇલમાંથી MP3 પસંદ કરો
-        </label>
-
+        <p class="music-intro">તમારા મોબાઇલમાં રહેલાં MP3 ગીતો પસંદ કરીને અહીં સાંભળી શકો છો.</p>
+        <label for="mp3Files" class="file-button">📂 મોબાઇલમાંથી MP3 પસંદ કરો</label>
         <input id="mp3Files" type="file" accept="audio/*" multiple>
-
-        <p id="mp3Status" class="music-intro">
-          અહીંથી કોઈ ગીત પસંદ કરો.
-        </p>
-
+        <p id="mp3Status" class="music-intro">અહીંથી કોઈ ગીત પસંદ કરો.</p>
         <audio id="mp3Audio" controls></audio>
-
         <div class="player-controls">
           <button id="mp3Prev">⏮ Previous</button>
           <button id="mp3Next">Next ⏭</button>
         </div>
-
         <h3 class="music-heading">ગીતોની યાદી</h3>
         <ol id="mp3List"></ol>
       </div>
 
-      <p class="music-note">
-        MP3 Player તમારા મોબાઇલમાંથી પસંદ કરેલાં ગીતો
-        વગાડવા માટે છે. Relaxation Music આરામ અને
-        મનની શાંતિ માટેનું સંગીત છે.
-      </p>
+      <p class="music-note">MP3 Player તમારા મોબાઇલમાંથી પસંદ કરેલાં ગીતો વગાડવા માટે છે. Relaxation Music આરામ અને મનની શાંતિ માટેનું સંગીત છે.</p>
     </div>
   </section>
-
-  <!-- MAP -->
-  <section id="mapSection" class="app-section">
-    <div class="section-heading">
-      <h2>🗺️ Map અને માર્ગદર્શન</h2>
-      <button class="home-btn" data-home>↩ Home</button>
-    </div>
-
-    <div class="card feature-message">
-      <div class="big-icon">📍</div>
-      <h2>તમારે ક્યાં જવું છે?</h2>
-      <p>
-        નજીકનાં સ્થળો, સરનામાં અને સરળ રસ્તા વિશે
-        માહિતી મેળવવા માટે SWAYAM AI તમને મદદ કરશે.
-      </p>
-      <p>
-        તમે જે સ્થળે જવા માંગો છો તેનું નામ લખીને
-        અથવા બોલીને પૂછી શકો છો.
-      </p>
-    </div>
-  </section>
-
-</section>
-
-<footer>
-  SWAYAM AI તમારી સાથે ચાલતી તમારી પોતાની AI મિત્ર છે.
-  <br>
-  આ એક માર્ગદર્શન આપતું સાધન છે;
-  મહત્વના નિર્ણયોમાં સમજદારીથી કામ લો.
-</footer>
-
-</main>
-
-<div id="voiceInfo"
-  style="font-size:13px;padding:10px;margin:10px;color:#555;">
-  અવાજની સુવિધા તૈયાર થઈ રહી છે...
-</div>
-
-<script type="module" src="./app.js"></script>
-
-<script>
-(function () {
-  const sections = document.querySelectorAll(".app-section");
-
-  function showSection(id) {
-    sections.forEach(section => section.classList.remove("active"));
-
-    const selected = document.getElementById(id);
-    if (selected) selected.classList.add("active");
-
-    window.scrollTo({ top:0, behavior:"smooth" });
-  }
-
-  document.querySelectorAll("[data-open]").forEach(button => {
-    button.addEventListener("click", () => {
-      showSection(button.getAttribute("data-open"));
-    });
-  });
-
-  document.querySelectorAll("[data-home]").forEach(button => {
-    button.addEventListener("click", () => {
-      showSection("homeSection");
-    });
-  });
-
-  const infoChatBtn = document.getElementById("infoChatBtn");
-  if (infoChatBtn) {
-    infoChatBtn.addEventListener("click", function() {
-      showSection("chatSection");
-      document.getElementById("message")?.focus();
-    });
-  }
-
-  window.swayamShowSection = showSection;
-})();
-
-/* LOCAL MP3 PLAYER */
-(function () {
-  const fileInput = document.getElementById("mp3Files");
-  const audio = document.getElementById("mp3Audio");
-  const list = document.getElementById("mp3List");
-  const status = document.getElementById("mp3Status");
-
-  if (!fileInput || !audio || !list || !status) return;
-
-  let tracks = [];
-  let currentTrack = 0;
-  let currentUrl = null;
-
-  function playTrack(index) {
-    if (!tracks.length) return;
-
-    currentTrack = (index + tracks.length) % tracks.length;
-
-    if (currentUrl) URL.revokeObjectURL(currentUrl);
-
-    currentUrl = URL.createObjectURL(tracks[currentTrack]);
-    audio.src = currentUrl;
-
-    audio.play().catch(() => {
-      status.textContent = "ગીત વગાડવા માટે Play દબાવો.";
-    });
-
-    status.textContent = "ચાલુ ગીત: " + tracks[currentTrack].name;
-    renderList();
-  }
-
-  function renderList() {
-    list.innerHTML = "";
-
-    tracks.forEach((file, index) => {
-      const item = document.createElement("li");
-      item.textContent = file.name;
-
-      if (index === currentTrack) item.classList.add("selected");
-
-      item.addEventListener("click", () => playTrack(index));
-      list.appendChild(item);
-    });
-  }
-
-  fileInput.addEventListener("change", function() {
-    tracks = Array.from(fileInput.files || []);
-    currentTrack = 0;
-
-    if (!tracks.length) {
-      status.textContent = "કોઈ ગીત પસંદ કરવામાં આવ્યું નથી.";
-      return;
-    }
-
-    status.textContent = tracks.length + " ગીત પસંદ કરવામાં આવ્યાં.";
-    renderList();
-    playTrack(0);
-  });
-
-  document.getElementById("mp3Prev")?.addEventListener("click", () => {
-    playTrack(currentTrack - 1);
-  });
-
-  document.getElementById("mp3Next")?.addEventListener("click", () => {
-    playTrack(currentTrack + 1);
-  });
-
-  audio.addEventListener("ended", function() {
-    if (tracks.length > 1) playTrack(currentTrack + 1);
-  });
-
-  window.addEventListener("beforeunload", function() {
-    if (currentUrl) URL.revokeObjectURL(currentUrl);
-  });
-})();
-</script>
-
-</body>
-</html>
-
 
 
