@@ -444,5 +444,44 @@
   </section>
 <script type="module" src="/app.js"></script>
 </body>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  function openSection(id) {
+    document.querySelectorAll(".app-section").forEach(section => {
+      section.classList.remove("active");
+    });
+
+    const target = document.getElementById(id);
+
+    if (target) {
+      target.classList.add("active");
+      window.scrollTo(0, 0);
+    }
+  }
+
+  document.querySelectorAll("[data-open]").forEach(button => {
+    button.addEventListener("click", function () {
+      openSection(this.dataset.open);
+    });
+  });
+
+  document.querySelectorAll("[data-home]").forEach(button => {
+    button.addEventListener("click", function () {
+      openSection("homeSection");
+    });
+  });
+
+  document.getElementById("infoChatBtn")?.addEventListener("click", function () {
+    openSection("chatSection");
+  });
+
+  document.querySelectorAll(".music-category button").forEach(button => {
+    button.addEventListener("click", function () {
+      const search = encodeURIComponent(this.textContent.trim() + " songs");
+      window.open("https://www.youtube.com/results?search_query=" + search, "_blank");
+    });
+  });
+});
+</script>  
 </html>
 
