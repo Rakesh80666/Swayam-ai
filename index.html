@@ -1,4 +1,5 @@
 
+
 <!doctype html>
 <html lang="gu">
 <head>
@@ -10,18 +11,26 @@
 <link rel="stylesheet" href="/style.css">
 <title>SWAYAM AI</title>
 
-<!-- Talking Avatar library -->
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.186.0/build/three.module.js",
-    "three/examples/jsm/": "https://cdn.jsdelivr.net/npm/three@0.186.0/examples/jsm/",
-    "@interviewflowai/talking-avatar": "https://cdn.jsdelivr.net/npm/@interviewflowai/talking-avatar@0.3.0/dist/index.js"
+
+
+const canvas = document.getElementById("swayam-avatar");
+
+if (canvas) {
+  try {
+    const face = createFace2d(canvas, {
+      assets: "./wireface/assets/"
+    });
+
+    await face.useCharacter("sora");
+
+    window.swayamFace = face;
+
+    console.log("SWAYAM AI Avatar તૈયાર છે.");
+  } catch (error) {
+    console.error("Avatar Error:", error);
   }
 }
 </script>
-
-<style>
 .home-intro { text-align:center; padding:18px 12px; }
 .home-intro h2 { margin:10px 0 5px; }
 .home-intro p { color:#667085; margin:5px 0; font-size:14px; }
@@ -349,6 +358,9 @@
     src="./file_00000000debc82119f61e08c4f8d90f6.png"
     alt="SWAYAM AI મહિલા મિત્ર">
   <div id="talkingAvatarMount"></div>
+  <canvas id="swayam-avatar"
+style="width:100%; height:340px; display:block;">
+</canvas>
   <div class="call-caption">
     નમસ્તે! હું તમારી સાથે વાત કરવા તૈયાર છું. 💜
   </div>
@@ -499,6 +511,30 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 </script>
-</body> 
+
+<!-- Wireface Avatar -->
+<script type="module">
+import { createFace2d } from "./wireface/dist/2d.js";
+
+const canvas = document.getElementById("swayam-avatar");
+
+if (canvas) {
+  try {
+    const face = createFace2d(canvas, {
+      assets: "./wireface/assets/"
+    });
+
+    await face.useCharacter("sora");
+    window.swayamFace = face;
+  } catch (error) {
+    console.error("Avatar Error:", error);
+  }
+}
+</script>
+
+</body>
 </html>
+
+
+
 
