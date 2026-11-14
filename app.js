@@ -647,3 +647,4 @@ onAuthStateChanged(auth, async (user) => {
     endCall();
   }
 });
+
