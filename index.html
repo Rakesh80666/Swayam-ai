@@ -491,26 +491,6 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-<!-- Wireface Avatar -->
-<script type="module">
-import { createFace2d } from "./wireface/dist/2d.js";
-
-const canvas = document.getElementById("swayam-avatar");
-
-if (canvas) {
-  try {
-    const face = createFace2d(canvas, {
-      assets: "./wireface/assets/"
-    });
-
-    await face.useCharacter("sora");
-    window.swayamFace = face;
-  } catch (error) {
-    console.error("Avatar Error:", error);
-  }
-}
-</script>
-
 </body>
 </html>
 
