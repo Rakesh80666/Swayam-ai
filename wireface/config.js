@@ -1,0 +1,2 @@
+/*! Wireface | Required Notice: Copyright 2026 Compsmart (https://wireface.dev) | Wireface Personal Licence: free for personal and commercial use, not in a product or service you sell or charge for; https://wireface.dev/license/ */
+import{a as o,b as r,c as e,d as f,e as m,f as p,g as t}from"./chunk-EHORLKYD.js";import"./chunk-D26GERHW.js";export{p as ConfigError,f as DEFAULTS,e as PRESETS,m as RANGES,o as STYLES,r as TEETH_STYLES,t as validateConfig};
